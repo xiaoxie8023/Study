@@ -28,34 +28,34 @@ class Solution {
       * @date 2023/11/22 22:46
       * @param nums
       */
-     public void nextPermutation(int[] nums) {
-         int i = nums.length-2;
-         while(i > 0 && nums[i] > nums[i+1]) {
-             i--;
+         public void nextPermutation(int[] nums) {
+             int i = nums.length-2;
+             while(i >= 0 && nums[i] >= nums[i+1]) {
+                 i--;
+             }if(i >=0) {
+                 int j = nums.length-1;
+                 while (j > 0 && nums[i] >= nums[j]) {
+                     j--;
+                 }
+                 Swap(nums,i,j);
+             }
+             rever(nums,i+1);
          }
-         if(i > 0) {
-             Swap(nums,i);
-             rever(nums,i);
+         public void Swap(int[] nums, int i,int j) {
+             int temp = nums[i];
+             nums[i] = nums[j];
+             nums[j] = temp;
          }
-         rever(nums,i);
+         public void rever(int[] nums,int i) {
+             int j = i;
+             int k = nums.length-1;
+             while(j < k) {
+                 Swap(nums,j,k);
+                 j++;
+                 k--;
+             }
+         }
      }
-    private void Swap(int[] nums, int i) {
-        int temp = nums[i];
-        nums[i] = nums[i+1];
-        nums[i+1] = temp;
-    }
-    private void rever(int[] nums,int i) {
-        int j = i+1;
-        int k = nums.length-1;
-        while(k-j > 0) {
-            int temp = nums[k];
-            nums[k] = nums[j];
-            nums[j] = temp;
-            j++;
-            k--;
-        }
-    }
-}
 /** * @author xiaoxie
  * Date 2023年11月22日 21:54
  */
@@ -69,7 +69,7 @@ public class Text {
      */
     public static void main(String[] args) {
         Solution s = new Solution();
-        int[] num = {3,2,1};
+        int[] num = {5,1,1};
         s.nextPermutation(num);
     }
     /*
