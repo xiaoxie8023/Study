@@ -232,4 +232,5 @@ public class Text {
         }
         System.out.println(count);
     }
+  Arrays.sort(nums);
 }
