@@ -20,7 +20,7 @@ public class ReturnOperation implements IOperation{
         int count = bookList.getSize();
         int i = 0;
         for (; i < count; i++) {
-            if (bookList.getList(i).getName().equals(name) ) {
+            if (bookList.getList(i).getName().equals(name) && bookList.getList(i).isBorrowed()) {
                 bookList.getList(i).setBorrowed(false);
                 System.out.println("归还成功，欢迎下次光临");
                 return;

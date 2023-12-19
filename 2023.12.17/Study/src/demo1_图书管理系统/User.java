@@ -10,7 +10,16 @@ package demo1_图书管理系统;/**
  * * @author xiaoxie
  * @date 2023年12月17日 19:18
  */
-import java.util.Scanner;
-public class User {
 
+public abstract class User {
+ public IOperation[] iOperations;
+ public String name;
+    public User(String name) {
+        this.name = name;
+    }
+    public abstract int menu();
+    public void doOperation(int choice,BookList bookList) {
+        IOperation operation = this.iOperations[choice];
+        operation.work(bookList);
+    }
 }

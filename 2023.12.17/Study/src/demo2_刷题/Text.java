@@ -7,6 +7,9 @@ package demo2_刷题;
  * Time: 18:06
  */
 
+import java.math.BigInteger;
+import java.util.Scanner;
+
 /** 链表
  * * @author xiaoxie
  * @date 2023年12月17日 18:06
@@ -61,6 +64,45 @@ class Solution {
         }
         //返回链表的头节点
         return prev.next;
+    }
+}
+/** 蓝桥杯，重写equals方法
+ * * @author xiaoxie
+ * @date 2023年12月17日 18:06
+ */
+ class Value {
+    private int i;
+    private String s;
+
+    public Value(int i, String s) {
+        this.i = i;
+        this.s = s;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Value value = (Value) o;
+        return i == value.i && s.equals(value.s);
+    }
+}
+// 1:无需package
+// 2: 类名必须Main, 不可修改
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        BigInteger b1 = new BigInteger("2");
+        BigInteger b2 = b1.pow(2023);
+        BigInteger b3 = new BigInteger("1000");
+        BigInteger b4 = b2.mod(b3);
+        System.out.println(b4);
+        scan.close();
     }
 }
 public class Text {
