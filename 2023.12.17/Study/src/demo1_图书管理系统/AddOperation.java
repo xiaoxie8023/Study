@@ -1,6 +1,5 @@
 package demo1_图书管理系统;
 /**
- * Created with IntelliJ IDEA.
  * Description:
  * User: 谢忠涵7
  * Date: 2023-12-17
