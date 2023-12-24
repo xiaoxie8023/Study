@@ -1,6 +1,5 @@
 /*
 
-*/
 /**
  * Created with IntelliJ IDEA.
  * Description:
