@@ -6,9 +6,8 @@ package demo;/**
  * Time: 19:17
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
+
 /** * @author xiaoxie
  * @date 2024年01月20日 19:17
  */
@@ -160,6 +159,41 @@ class Solution5 {
             n/=10;
         }
         return sum;
+    }
+}
+/** * @author xiaoxie
+ * 利用优先级队列来解
+ * @date 2024年01月20日 19:17
+ * 力扣刷题 https://leetcode.cn/problems/smallest-k-lcci/description/ 面试题 17.14. 最小K个数
+ */
+class comparator1 implements Comparator<Integer> {
+    @Override
+    public int compare(Integer o1, Integer o2) {
+        return o2.compareTo(o1);
+    }
+}
+class Solution6 {
+    public int[] smallestK(int[] arr, int k) {
+        int[] res = new int[k];
+        if(k == 0) return res;
+        comparator1 comparator = new comparator1();
+        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>(comparator);
+        for(int i = 0;i < k;i++) {
+            priorityQueue.offer(arr[i]);
+        }
+        int end = k;
+        while(end < arr.length) {
+            int tmp = priorityQueue.peek();
+            if(arr[end] < tmp) {
+                priorityQueue.poll();
+                priorityQueue.offer(arr[end]);
+            }
+            end++;
+        }
+        for(int i = 0;i < k;i++) {
+            res[i] = priorityQueue.poll();
+        }
+        return res;
     }
 }
 public class Text {
