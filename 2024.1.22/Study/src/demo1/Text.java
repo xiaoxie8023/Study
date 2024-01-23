@@ -88,4 +88,44 @@ class Solution2 {
 }
 
 public class Text {
+    public static void selectSort(int[] array) {
+        for(int i = 0; i < array.length;i++) {
+            int minIndex = i;
+            for ( int j = i+1;j < array.length;j++) {
+                if(array[j] < array[minIndex]) {
+                    minIndex = j;
+                }
+            }
+            int tmp = array[i];
+            array[i] = array[minIndex];
+            array[minIndex] = tmp;
+        }
+    }
+    public static void selectSort2(int[] array) {
+        int left = 0;
+        int right = array.length-1;
+        while (left < right) {
+            int minIndex = left;
+            int MaxIndex = right;
+            int i = left + 1;
+            while (i < right) {
+                if(array[i] < array[minIndex]){
+                    minIndex = i;
+                }
+                if(array[i] > array[MaxIndex]) {
+                    MaxIndex = i;
+                }
+                i++;
+            }
+            swap(array,left,minIndex);
+            swap(array,right,MaxIndex);
+            left++;
+            right--;
+        }
+    }
+    public static void swap(int[] array,int i ,int j) {
+        int tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
 }
