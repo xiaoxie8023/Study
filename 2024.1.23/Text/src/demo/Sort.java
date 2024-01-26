@@ -130,6 +130,44 @@ public class Sort {
             right--;
         }
     }
+    /**
+     * 堆排序
+     * 时间复杂度为：O(n*log2n);
+     * 空间复杂度为：O（1）;
+     * 稳定性为：不稳定；
+     * @author xiaoxie
+     * @date 2024/1/26 9:40
+     * @return null
+     */
+    public static void heapSort(int[] array) {
+        createHeap(array);
+        int end = array.length-1;
+        while (end > 0) {
+            swap(array,0,end);
+            siftDown(array,0,end);
+            end--;
+        }
+    }
+    private static void siftDown(int[] array,int parent,int len) {
+        int child = 2*parent+1;
+        while (child < len){
+            if(child+1< len && array[child+1] > array[child]) {
+                child++;
+            }
+            if(array[child] > array[parent]) {
+                swap(array,child,parent);
+                parent = child;
+                child = 2*parent+1;
+            }else {
+                break;
+            }
+        }
+    }
+    private static void createHeap(int[] array) {
+        for (int parent = (array.length-1-1)/2; parent >= 0 ; parent--) {
+            siftDown(array,parent,array.length);
+        }
+    }
     /**时间复杂度为 ：最好为O（n）最坏为O（n^2）
      * 空间复杂度为: O（1）
      * 稳定性为：稳定
@@ -341,9 +379,81 @@ public class Sort {
             array[i+left] = tmp[i];
         }
     }
+    /** 归并排序的非递归
+     *
+     * @author xiaoxie
+     * @date 2024/1/26 18:47
+     * @return null
+     */
+    public static void mergeSortNor(int[] array) {
+        int  gap = 1;
+        //最外层循环 控制组数
+        while (gap < array.length) {
+            //每一组进行排序
+            for (int i = 0; i < array.length; i = i+2*gap) {
+                int left = i;
+                int mid = left + gap-1;
+                if(mid >= array.length) {
+                    mid = array.length-1;
+                }
+                int right = mid+gap;
+                if(right >= array.length) {
+                    right = array.length-1;
+                }
+                marge(array,left,mid,right);
+            }
+            gap *= 2;
+        }
+    }
+    /**
+     * 基数排序
+     * 时间复杂度为：O（n+范围）
+     * 空间复杂度为：O（范围）；
+     * 稳定性：不稳定
+     * 适用于范围小的，数字密集的情况
+     * @author xiaoxie
+     * @date 2024/1/26 18:08
+     * @return null
+     */
+    public static void CountingSort(int[] array) {
+        //1.求最值 -> O(n)
+        int min = array[0];
+        int max = array[0];
+        for (int i = 1; i < array.length; i++) {
+            if(min > array[i]) {
+                min = array[i];
+            }
+            if(max < array[i]) {
+                max = array[i];
+            }
+        }
+        //2、定义计数数组 进行初始化   -> O(n)
+        int[] count = new int[max-min+1];
 
+        for (int i = 0; i < array.length; i++) {
+            int index = array[i]-min;
+            count[index]++;
+        }
+
+        //3、遍历计数数组   -> O(max-min) ：max-min-》范围
+        int k = 0;//表示array数组的下标
+        for (int i = 0; i < count.length; i++) {
+            while (count[i] != 0) {
+                array[k] = i + min;
+                k++;
+                count[i]--;
+            }
+        }
+    }
+    /**
+     *
+     * @author xiaoxie
+     * @date 2024/1/26 18:51
+     * @param null
+     * @return null
+     */
     public static void main(String[] args) {
-        int[] array = {12,87,69,25,3,1,58,76,32};
+        int[] array = {5,2,3,1,2,3,4,5,9,7,4,5,3,2,1,2,1,3,1};
         //Sort.insertSort(array);
         System.out.println(Arrays.toString(array));
         //Sort.insertSort(array);
@@ -353,7 +463,9 @@ public class Sort {
         //Sort.bubbleSort(array);
         //Sort.quickSort(array);
         //Sort.quickSortNor(array);
-        Sort.margeSort(array);
+        //Sort.margeSort(array);
+        //Sort.heapSort(array);
+        Sort.CountingSort(array);
         System.out.println(Arrays.toString(array));
 
     }
