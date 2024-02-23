@@ -167,7 +167,7 @@ public class AVLTree {
             parent.bf = 1;
             subL.bf = 0;
             subLR.bf = 0;
-        }else {
+        }else if{
             parent.bf = 0;
             subL.bf = -1;
             subLR.bf = 0;
@@ -188,7 +188,7 @@ public class AVLTree {
             parent.bf = 0;
             subRL.bf = 0;
             subR.bf = 1;
-        }else {
+        }else if {
             parent.bf = -1;
             subRL.bf = 0;
             subR.bf = 0;

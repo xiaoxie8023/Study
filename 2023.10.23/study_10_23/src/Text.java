@@ -11,7 +11,7 @@
 */
 /*public class Text {
     public static void main1(String[] args) {
-        // 判断素数
+        // 判断素数1
         int count = 0;
 
         for (int i = 100; i <= 800; i++) {
