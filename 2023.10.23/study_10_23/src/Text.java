@@ -9,7 +9,7 @@
  *
 
 */
-/*public class Text {
+/*public cl了ass Text {
     public static void main1(String[] args) {
         // 判断素数1
         int count = 0;
