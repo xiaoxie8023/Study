@@ -7,6 +7,6 @@ package demo1;
  * Date: 2024-02-23
  * Time: 17:51
  */
-public enum COLOUR {
-    RED,BLACK;
+public enum COLOR {
+    RED,BLACK
 }

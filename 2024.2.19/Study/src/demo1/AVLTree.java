@@ -178,12 +178,12 @@ public class AVLTree {
         rotateLeft(parent);
         if(bf == -1) {
             subRL.bf = 0;
-            subR.bf = 0;
-            parent.bf = -1;
+            subR.bf = 1;
+            parent.bf = 0;
         }else if(bf == 1) {
             subRL.bf = 0;
-            parent.bf = 0;
-            subR.bf = 1;
+            parent.bf = -1;
+            subR.bf = 0;
         }
     }
     /**
