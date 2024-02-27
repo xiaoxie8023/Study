@@ -4,14 +4,14 @@
  * Created with IntelliJ IDEA.
  * Description:
  * User: 谢忠涵7
- * Date: 2023-10-24
+ * Date: 20231-10-24
  * Time: 19:12000
  *
 
 */
-/*public class Text {
+/*public cl了ass Text {
     public static void main1(String[] args) {
-        // 判断素数1
+        // 判断nihao素数1
         int count = 0;
 
         for (int i = 100; i <= 800; i++) {
