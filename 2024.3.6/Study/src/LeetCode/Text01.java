@@ -135,5 +135,51 @@ public class Text01 {
         }
         return ret;
     }
-
+    /** 力扣 1137. 第 N 个泰波那契数
+     *  https://leetcode.cn/problems/n-th-tribonacci-number/description/
+     *  动态规划的简单题目
+     *  状态表示: dp表的dp[i]就为答案
+     *  状态转移方程:  Tn+3 = Tn + Tn+1 + Tn+2
+     *   时间复杂度为: O(n)
+     *   空间复杂度为: O(n)
+     * @author xiaoxie
+     * @date 2024/3/11 22:44
+     * @param n
+     * @return int
+     */
+    public int TriBoNaCci(int n) {
+        if(n == 0) return 0;
+        if(n == 1 || n == 2) return 1;
+        int[] dp = new int[n+1];
+        dp[0] = 0;dp[1] = 1;dp[2] = 1;
+        for(int i = 3; i<= n; i++) {
+            dp[i] = dp[i-3] + dp[i - 2] + dp[i-1];
+        }
+        return dp[n];
+    }
+    /** 力扣 1137. 第 N 个泰波那契数
+     *  https://leetcode.cn/problems/n-th-tribonacci-number/description/
+     *  动态规划的简单题目
+     *  状态表示: dp表的dp[i]就为答案
+     *  状态转移方程:  Tn+3 = Tn + Tn+1 + Tn+2
+     *   时间复杂度为: O(n)
+     *   空间复杂度为: O(1) 是对之前动态规划的空间优化 使用滚动数组的方式
+     * @author xiaoxie
+     * @date 2024/3/11 22:53
+     * @param n
+     * @return int
+     */
+    public int TriBoNaCci2(int n) {
+        if(n == 0) return 0;
+        if(n == 1 || n == 2) return 1;
+        int[] dp = new int[4];
+        dp[0] = 0;dp[1] = 1;dp[2] = 1;
+        for(int i = 3;i<= n;i++) {
+            dp[3] = dp[0] + dp[1] + dp[2];
+            dp[0] = dp[1];
+            dp[1] = dp[2];
+            dp[2] = dp[3];
+        }
+        return dp[3];
+    }
 }
