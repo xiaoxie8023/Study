@@ -182,4 +182,160 @@ public class Text01 {
         }
         return dp[3];
     }
+    /** 力扣 三步问题
+     * https://leetcode.cn/problems/three-steps-problem-lcci/
+     * 动态规划的简单题目
+     * 状态表示: dp表的dp[i]就为答案
+     *  状态转移方程:  Tn+3 = Tn + Tn+1 + Tn+2
+     *  时间复杂度为: O(n)
+     *  空间复杂度为: O(1)
+     * @author xiaoxie
+     * @date 2024/3/12 16:19
+     * @param n
+     * @return int
+     */
+    public int waysToStep(int n) {
+        final int m = (int)1e9 + 7;
+        if(n == 1) return 1;
+        if(n == 2) return 2;
+        if(n == 3) return 4;
+        int a = 1,b = 2,c = 4,d = 0;
+        for(int i = 4;i <= n;i++) {
+            d = (c + (a + b)% m) % m;
+            a = b;
+            b = c;
+            c = d;
+        }
+        return d;
+    }
+    /**
+     * 快速幂运算
+     * 以2的11次方为例
+     *  2的8次方 加上 2的2次方 加上 2的1次方
+     *  11 = 8 + 2 + 1
+     *   1101
+     *  &0001
+     *  在右移
+     *   101
+     *  &001
+     * @author xiaoxie
+     * @date 2024/3/12 20:03
+     * @return int
+     */
+    public static int fastPow() {
+        final int Mod = 10000; // 只保留最后4位
+        int a = 2024;
+        int n = (int)1e9;
+        int ans = 1;
+        while (n > 0) {
+            if ((n & 1) == 1) {
+                ans = (ans * a) % Mod;
+            }
+            a = (a * a) % Mod;
+            n >>= 1;
+        }
+        return ans;
+    }
+    /** 使用矩阵快速幂
+     * 「快速幂」和「矩阵乘法」
+     *
+     * @author xiaoxie
+     * @date 2024/3/12 20:59
+     * @param null
+     * @return null
+     */
+    int N = 3;
+    //[矩阵乘法」
+    public int[][] mutil(int[][]a,int[][] b) {
+        int[][]c = new int[N][N];
+        for(int i = 0; i < N;i++) {
+            for(int j = 0;j < N;j ++) {
+                c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] *b[2][j];
+
+            }
+
+        }
+        return c;
+
+    }
+    public int tribonacci(int n) {
+        if (n == 0) return 0;
+        if (n == 1 || n == 2) return 1;
+        int[][] ans = new int[][]{
+                {1,0,0},
+                {0,1,0},
+                {0,0,1}
+        };
+        int[][] mat = new int[][] {
+                {1,1,1},
+                {1,0,0},
+                {0,1,0}
+        };
+        int k = n - 2;
+        //快速幂
+        while(k > 0) {
+            if((k & 1) == 1) {
+                ans = mutil(ans,mat);
+            }
+            mat = mutil(mat,mat);
+            k >>= 1;
+        }
+        return ans[0][0] + ans[0][1];
+    }
+    /** 力扣 746. 使用最小花费爬楼梯
+     * https://leetcode.cn/problems/min-cost-climbing-stairs/description/
+     * 动态规划加滚动数组
+     * 状态表示为:
+     *
+     * dp[i] 表示为到达i位置,所花费的最小费用
+     * 状态方程:
+     * dp[i] = Math.min(dp[i-1] + cost[i-1],dp[i-2] + cost[i-2]);
+     * 时间复杂度 O(N)
+     * 空间复杂度 O (1)
+     * @author xiaoxie
+     * @date 2024/3/12 21:39
+     * @param cost
+     * @return int
+     */
+    public static int minCostClimbingStairs(int[] cost) {
+        int length = cost.length;
+        int a = 0;//cost[i-2]
+        int b = 0;//cost[i-1]
+        for(int i = 2; i <=length; i++) {
+            int ans = Math.min(a +cost[i-2],b + cost[i-1]);
+            a = b;
+            b = ans;
+        }
+        return b;
+    }
+    /** 力扣 746. 使用最小花费爬楼梯
+     * https://leetcode.cn/problems/min-cost-climbing-stairs/description/
+     * 动态规划加滚动数组
+     * 状态表示为:
+     * 以i位置表示到达楼顶,所花费的最小费用
+     * dp[i] 表示为以i位置出发到达楼顶,所花费的最小费用
+     * 状态方程:
+     * dp[i] = Math.min(dp[i+1] + cost[i],dp[i+2] + cost[i]);
+     * 时间复杂度 O(N)
+     * 空间复杂度 O (1)
+     * @author xiaoxie
+     * @date 2024/3/12 21:39
+     * @param cost
+     * @return int
+     */
+    public int minCostClimbingStairs2(int[] cost) {
+        int n = cost.length;
+        int a = cost[n-1];
+        int b = cost[n-2];
+        for(int i = n-3;i>=0;i--) {
+            int ans = Math.min(a+cost[i],b+cost[i]);
+            a = b;
+            b = ans;
+        }
+        return a > b ? b : a;
+    }
+    public static void main(String[] args) {
+        int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
+       minCostClimbingStairs(cost);
+    }
 }
