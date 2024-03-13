@@ -334,6 +334,83 @@ public class Text01 {
         }
         return a > b ? b : a;
     }
+    /** 力扣 91. 解码方法
+     * https://leetcode.cn/problems/decode-ways/description/
+     * 动态规划
+     * 状态表示: dp[i]表示到达i位置时需要多少种方法
+     * 状态转移方程: dp[i] = dp[i-1] + dp[i-2] 前提是不为'0'
+     * 初始化: 使用虚拟节点 使dp[0]为1,就可以让之后的填表问题在循环中实现
+     * 返回值:dp[n]
+     * 时间复杂度: O(n)
+     * 空间复杂度:O(1)
+     * @author xiaoxie 
+     * @date 2024/3/13 22:24
+     * @param s 
+     * @return int 
+     */
+    public int numDecodings(String s) {
+        int n = s.length();
+        int[] dp = new int[n+1];
+        dp[0] = 1;//虚拟的节点
+        for(int i = 1;i <= n;i++) {
+            if(s.charAt(i-1) != '0') {
+                dp[i] += dp[i-1];
+            }
+            if(i > 1 && s.charAt(i-2) != '0' && ((s.charAt(i-2)-'0') * 10 + (s.charAt(i-1) - '0') >= 10 &&(s.charAt(i-2)-'0') * 10 + (s.charAt(i-1) - '0')<=26)) {
+                dp[i] +=dp[i-2];
+            }
+        }
+        return dp[n];
+    }
+    /**力扣 91. 解码方法
+     * https://leetcode.cn/problems/decode-ways/description/
+     * 空间优化
+     * 空间复杂度为O(1)
+     * @author xiaoxie
+     * @date 2024/3/13 22:32
+     * @param s
+     * @return int
+     */
+    public int numDecodings2(String s) {
+        int n = s.length();
+        int a = 0,b = 1,c = 0;
+        for(int i = 1;i <= n;i++) {
+            c = 0;//每次都需要先把c置为0
+            if(s.charAt(i-1) != '0') {
+                c += b;
+            }
+            if(i > 1 && s.charAt(i-2) != '0' && ((s.charAt(i-2)-'0') * 10 + (s.charAt(i-1) - '0') >= 10 &&(s.charAt(i-2)-'0') * 10 + (s.charAt(i-1) - '0')<=26)) {
+                c += a;
+            }
+            a = b;
+            b = c;
+        }
+        return c;
+    }
+    /** 力扣 62. 不同路径
+     * https://leetcode.cn/problems/unique-paths/description/
+     * 状态表示: dp[i][j] 表示为到达i行j列所需要的方法总数
+     * 状态转移方程: dp[i][j] = dp[i-1][j] + dp[i][j-1]
+     * 初始化:一样是虚拟节点不过是增加1行1列,画图会更好理解,把dp[0][1] = 1;
+     * 返回值: dp[m][n]
+     * 时间复杂度为O(M*N)
+     * 空间复杂度为O(M*N)
+     * @author xiaoxie
+     * @date 2024/3/13 22:38
+     * @param m
+     * @param n
+     * @return int
+     */
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m+1][n+1];
+        dp[0][1] = 1;
+        for(int i = 1;i <= m;i++) {
+            for(int j = 1;j <= n;j++) {
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
+        }
+        return dp[m][n];
+    }
     public static void main(String[] args) {
         int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
        minCostClimbingStairs(cost);
