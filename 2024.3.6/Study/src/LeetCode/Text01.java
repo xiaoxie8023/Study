@@ -411,6 +411,36 @@ public class Text01 {
         }
         return dp[m][n];
     }
+    /** 力扣63. 不同路径 II
+     * https://leetcode.cn/problems/unique-paths-ii/description/
+     * 状态表示: dp[i][j] 表示为到达i行j列所需要的方法总数
+     *  状态转移方程: dp[i][j] = dp[i-1][j] + dp[i][j-1]
+     * 初始化:一样是虚拟节点不过是增加1行1列,画图会更好理解,把dp[0][1] = 1;
+     * 需要注意到下标的映射关系,因为加了1行1列所以,要访问原数组要统一减一
+     * *返回值: dp[m][n]
+     * 时间复杂度为O(M*N)
+     * 空间复杂度为O(M*N)
+     * @author xiaoxie
+     * @date 2024/3/14 22:45
+     * @param obstacleGrid
+     * @return int
+     */
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        int[][] dp = new int[m + 1][n + 1];
+        dp[0][1] = 1;
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (obstacleGrid[i - 1][j - 1] == 1) {
+                    dp[i][j] = 0;
+                    continue;
+                }
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        return dp[m][n];
+    }
     public static void main(String[] args) {
         int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
        minCostClimbingStairs(cost);
