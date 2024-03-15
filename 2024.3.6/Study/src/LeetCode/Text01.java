@@ -441,6 +441,197 @@ public class Text01 {
         }
         return dp[m][n];
     }
+    /** 牛客 JZ47 礼物的最大价值
+     * https://www.nowcoder.com/practice/2237b401eb9347d282310fc1c3adb134?tpId=265&tqId=39288&ru=/exam/oj
+     * 状态表示: dp[i][j] 表示为到达i行j列时,换取的最大礼物值
+     * 状态转移方程: dp[i][j] = Math.max(dp[i-1][j],dp[i][j-1])+grid[i-1][j-1];
+     * 初始化:一样是虚拟节点不过是增加1行1列,画图会更好理解,都为0;
+     * 需要注意到下标的映射关系,因为加了1行1列所以,要访问原数组要统一减一
+     * 返回值: dp[m][n]
+     * 时间复杂度为O(M*N)
+     * 空间复杂度为O(M*N)
+     * @author xiaoxie
+     * @date 2024/3/15 20:14
+     * @param grid
+     * @return int
+     */
+    public int maxValue (int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+        int[][] dp = new int[n+1][m+1];
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1;j <= m;j++) {
+                dp[i][j] = Math.max(dp[i-1][j] ,dp[i][j-1])+grid[i-1][j-1];
+            }
+        }
+        return dp[n][m];
+    }
+    /**力扣 931. 下降路径最小和
+     * https://leetcode.cn/problems/minimum-falling-path-sum/description/
+     *状态表示: dp[i][j] 表示为到达i行j列时,下降路径的最小值
+     *状态转移方程: dp[i][j] = Math.min(dp[i-1][j-1],dp[i-1][j],dp[i-1][j+1])+matrix[i-1][j-1];
+     *初始化:一样是虚拟节点不过是增加1行两列,画图会更好理解,除了第一行为0,其他的都为MAX_VALUE;
+     *需要注意到下标的映射关系,因为加了1行1列所以,要访问原数组要统一减一 matrix[i][j] = matrix[i-1][j-1]
+     *顺序:只需要从上往下即可
+     *返回值: dp[n][] 的最小值
+     *时间复杂度为O(N*N)
+     *空间复杂度为O(M*N)
+     * @author xiaoxie
+     * @date 2024/3/15 21:03
+     * @param matrix
+     * @return int
+     */
+    public int minFallingPathSum(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        int val = Integer.MAX_VALUE;
+        int[][] dp = new int[n+1][m+2];
+        for(int i = 1;i <= n;i++) {
+            dp[i][0] = dp[i][n+1] = val;
+        }
+        for(int i =1;i<=n;i++) {
+            for(int j = 1;j <= n;j++) {
+                dp[i][j] = Math.min(dp[i-1][j-1],Math.min(dp[i-1][j],dp[i-1][j+1])) + matrix[i-1][j-1];
+            }
+        }
+        int ret = val;
+        for(int i = 1;i<=m;i++) {
+            ret = Math.min(dp[n][i],ret);
+        }
+        return ret;
+    }
+    /** 力扣 64. 最小路径和
+     * https://leetcode.cn/problems/minimum-path-sum/description/
+     * 状态表示: dp[i][j] 表示为到达i行j列时,换取的最短路径
+     *  状态转移方程: dp[i][j] = Math.max(dp[i-1][j],dp[i][j-1])+grid[i-1][j-1];
+     *  初始化:一样是虚拟节点不过是增加1行1列,画图会更好理解,除了 dp[0][1] = dp[1][0] = 0 别的虚拟节点为Integer.MAX_VALUE;
+     *  需要注意到下标的映射关系,因为加了1行1列所以,要访问原数组要统一减一
+     *  返回值: dp[m][n]
+     *  时间复杂度为O(M*N)
+     *  空间复杂度为O(M*N)
+     * @author xiaoxie
+     * @date 2024/3/15 21:34
+     * @param grid
+     * @return int
+     */
+    public int minPathSum(int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+        int val = Integer.MAX_VALUE;
+        int[][] dp = new int[n+1][m+1];
+        for(int i = 0;i <= n;i++) {
+            dp[i][0] = val;
+        }
+        for(int i = 0;i <= m;i++) {
+            dp[0][i] = val;
+        }
+        dp[0][1] = dp[1][0] = 0;
+        for(int i = 1;i <=n;i++) {
+            for(int j = 1;j <=m;j++) {
+                dp[i][j] = Math.min(dp[i-1][j],dp[i][j-1]) + grid[i-1][j-1];
+            }
+        }
+        return dp[n][m];
+    }
+    /** 力扣 174. 地下城游戏
+     * https://leetcode.cn/problems/dungeon-game/description/
+     * 状态表示:: dp[i][j]以i行j列为开始,救到公主所所需的最低初始健康点数
+     * 状态转移方程: dp[i][j] = Math.min(dp[i][j+1],dp[i+1][j])-dungeon[i][j];
+     *            同时 dp[i][j] = Math.max(1,dp[i][j]) 因为骑士最少要为一点健康点数
+     * 初始化:一样是虚拟节点不过是增加1行1列,画图会更好理解,除了dp[n-1][m] = dp[n][m-1] = 1; 别的虚拟节点为Integer.MAX_VALUE;
+     * 顺序:由于状态表示为dp[i][j]以i行j列为开始所以要以相反的的顺序来实现
+     * 返回值: dp[0][0]
+     * 时间复杂度为O(M*N)
+     * 空间复杂度为O(M*N)
+     * @author xiaoxie
+     * @date 2024/3/15 22:22
+     * @param dungeon
+     * @return int
+     */
+    public int calculateMinimumHP(int[][] dungeon) {
+        int n = dungeon.length;
+        int m = dungeon[0].length;
+        int[][] dp = new int[n+1][m+1];
+        int val = Integer.MAX_VALUE;
+        for(int i = 0;i<=n;i++) {
+            dp[i][m] = val;
+        }
+        for(int i = 0;i<=m;i++) {
+            dp[n][i] = val;
+        }
+        dp[n-1][m] = dp[n][m-1] = 1;
+        for(int i = n-1; i >= 0;i--) {
+            for(int j = m-1;j >= 0;j--){
+                dp[i][j] = Math.min(dp[i][j+1],dp[i+1][j])-dungeon[i][j];
+                dp[i][j] = Math.max(1,dp[i][j]);//骑士最少要为一点健康点数
+            }
+        }
+        return dp[0][0];
+    }
+    /** 力扣 面试题 17.16. 按摩师
+     * https://leetcode.cn/problems/the-masseuse-lcci/description/
+     * 状态表示:: dp[i]表示为到达i位置所要最长总预约时间
+     *          细分为
+     *          f[i] num[i]必选,所最长总预约时间
+     *          g[i] num[i]不选,所最长总预约时间
+     * 状态转移方程:
+     * f[i] = g[i-1] + nums[i]
+     * g[i] = Math.max(f[i-1],g[i-1])
+     * 初始化:f[0] = nums[0],g[0] = 0还需要判断数组是否存在
+     *返回值: :Math.max(f[n-1],g[n-1])
+     * 时间复杂度为O(N)
+     * 空间复杂度为O(N)
+     * @author xiaoxie
+     * @date 2024/3/15 22:55
+     * @param nums
+     * @return int
+     */
+    public int massage(int[] nums) {
+        int n = nums.length;
+        if(n == 0) return 0;
+        int[] f = new int[n];
+        int[] g = new int[n];
+        f[0] = nums[0];g[0] = 0;
+        for(int i = 1;i < n;i++) {
+            f[i] = g[i-1] + nums[i];
+            g[i] = Math.max(f[i-1],g[i-1]);
+        }
+        return Math.max(f[n-1],g[n-1]);
+    }
+    /** 使用滚动数组优化空间复杂度
+     * 力扣 面试题 17.16. 按摩师
+     * https://leetcode.cn/problems/the-masseuse-lcci/description/
+     * 状态表示:: dp 表示为到达i位置所要最长总预约时间
+     *          细分为
+     *           f num[i]必选,所最长总预约时间
+     *           g num[i]不选,所最长总预约时间
+     * 状态转移方程:
+     *    int res1 = g + nums[i];
+     *    int res2 = Math.max(f,g);
+     *    f = res1;
+     *    g = res2;
+     * 初始化:f = nums[0],g = 0还需要判断数组是否存在
+     *返回值: :Math.max(f,g)
+     * 时间复杂度为O(N)
+      空间复杂度为O(1)
+     * @author xiaoxie
+     * @date 2024/3/15 23:00
+     * @param nums
+     * @return int
+     */
+    public int massage2(int[] nums) {
+        int n = nums.length;
+        if(n == 0) return 0;
+        int f = nums[0];
+        int g = 0;
+        for(int i = 1;i < n;i++) {
+            int res1 = g + nums[i];
+            int res2 = Math.max(f,g);
+            f = res1;
+            g = res2;
+        }
+        return Math.max(f,g);
+    }
     public static void main(String[] args) {
         int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
        minCostClimbingStairs(cost);
