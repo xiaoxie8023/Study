@@ -606,7 +606,7 @@ public class Text01 {
      *           f num[i]必选,所最长总预约时间
      *           g num[i]不选,所最长总预约时间
      * 状态转移方程:
-     *    int res1 = g + nums[i];
+     *    int res1 = g[i-1]+ nums[i];
      *    int res2 = Math.max(f,g);
      *    f = res1;
      *    g = res2;
@@ -631,6 +631,242 @@ public class Text01 {
             g = res2;
         }
         return Math.max(f,g);
+    }
+    /** 213. 打家劫舍 II
+     * https://leetcode.cn/problems/house-robber-ii/description/
+     * 首先根据题意我们先把它分为两种情况
+     * 1.nums[0] 偷 那么nums[1]和nums[n-1]就不可以偷,[2-n-2]之间就可以用打家劫舍1来解 nums[0] + rob1
+     * 2..nums[0] 不偷,[1-n-1]之间就可以用打家劫舍1来解 rob1;
+     * 状态表示:: dp 表示为到达i位置所要最长总预约时间
+     *               细分为
+     *            f num[i]必选,所最长总预约时间
+     *             g num[i]不选,所最长总预约时间
+     *  状态转移方程:
+     *  int res1 = g[i-1]+ nums[i];
+     *  int res2 = Math.max(f,g);
+     *  f = res1;
+     *  g = res2;
+     * 初始化:f = nums[0],g = 0还需要判断数组是否存在
+     * 返回值: :Math.max(f,g)
+     *  时间复杂度为O(N)
+     *  空间复杂度为O(1)
+     * @author xiaoxie
+     * @date 2024/3/16 17:51
+     * @param nums
+     * @return int
+     */
+    public int rob(int[] nums) {
+        int n = nums.length;
+        int x = rob1(2,nums,n-2) + nums[0];
+        int y = rob1(1,nums,n-1);
+        return Math.max(x,y);
+    }
+    private int rob1(int i,int[] nums,int n) {
+        if(i > n) return 0;
+        int f = nums[i];
+        int g = 0;
+        for(i = i +1;i <=n;i++) {
+            int ret1 = g + nums[i];
+            int ret2 = Math.max(f,g);
+            f = ret1;
+            g = ret2;
+        }
+        return Math.max(f,g);
+    }
+    /** 力扣 740. 删除并获得点数
+     * https://leetcode.cn/problems/delete-and-earn/
+     *  把该问题可以转换成打家劫舍问题
+     *     nums[2,2,3,3,3,4]
+     *     array[0,0,4,9,4]
+     *   状态表示:: dp 表示为到达i位置获得的最大点数。
+     *        细分为
+     *          f array[i]选,获得的最大点数
+     *         g array[i]不选,获得的最大点数
+     * 状态转移方程:
+     *    int res1 = g[i-1]+ array[i];
+     *    int res2 = Math.max(f,g);
+     *     f = res1;
+     *     g = res2;
+     *    初始化:f = array[0],g = 0还需要判断数组是否存在
+     *    返回值: :Math.max(f,g)
+     *    时间复杂度为O(N)
+     *    空间复杂度为O(n):创建了array数组
+     * @author xiaoxie
+     * @date 2024/3/16 18:43
+     * @param nums
+     * @return int
+     */
+    public int deleteAndEarn(int[] nums) {
+        int n = nums.length;
+        int max = 0;
+        for(int val : nums) {
+            max = Math.max(max,val);
+        }
+        int[] array = new int[max+1];
+        for(int num:nums) {
+            array[num] = array[num] +  num;
+        }
+        //打家劫舍问题
+        int f = array[0];
+        int g = 0;
+        for(int i = 1;i < max+1;i++) {
+            int ret1 = g + array[i];
+            int ret2 = Math.max(f,g);
+            f = ret1;
+            g = ret2;
+        }
+        return Math.max(f,g);
+    }
+    /** LCR 091. 粉刷房子
+     * https://leetcode.cn/problems/JEj789/description/
+     * 状态表示: dp[i][0] 表示为到第i栋房子,粉刷红色所花费的钱
+     *         dp[i][1] 表示为到第i栋房子,粉刷蓝色所花费的钱
+     *         dp[i][2] 表示为到第i栋房子,粉刷绿色所花费的钱
+     * 状态转移方程:
+     *       dp[i][0] = Math.min(dp[i-1][1],dp[i-1][2]) + costs[i][0]
+     *       dp[i][1] = Math.min(dp[i-1][0],dp[i-1][2]) + costs[i][1]
+     *       dp[i][2] = Math.min(dp[i-1][1],dp[i-1][0]) + costs[i][2]
+     * 初始化:
+     *       增加一个虚拟节点初始化为0
+     * 返回值:
+     *  Math.min(dp[n][0],Math.min(dp[n][1],dp[n][2]));
+     *  时间复杂度:O(n)
+     *  空间复杂度:O(n)
+     * * @author xiaoxie
+     * @date 2024/3/16 20:44
+     * @param costs
+     * @return int
+     */
+    public int minCost(int[][] costs) {
+        int n = costs.length;
+        int[][] dp = new int[n+1][3];
+        for(int i = 1; i <= n;i++) {
+            dp[i][0] = Math.min(dp[i-1][1],dp[i-1][2]) + costs[i-1][0];
+            dp[i][1] = Math.min(dp[i-1][0],dp[i-1][2]) + costs[i-1][1];
+            dp[i][2] = Math.min(dp[i-1][1],dp[i-1][0]) + costs[i-1][2];
+        }
+        return Math.min(dp[n][0],Math.min(dp[n][1],dp[n][2]));
+    }
+    /**  LCR 091. 粉刷房子的空间优化
+     * 空间复杂度:O(1)
+     * @author xiaoxie
+     * @date 2024/3/16 20:55
+     * @param costs
+     * @return int
+     */
+    public int minCost2(int[][] costs) {
+        int n = costs.length;
+        int a = 0,b = 0, c = 0;
+        for(int i = 0;i < n;i++) {
+            int ret1 = Math.min(b,c) + costs[i][0];
+            int ret2 = Math.min(a,c) + costs[i][1];
+            int ret3 = Math.min(b,a) + costs[i][2];
+            a = ret1;
+            b = ret2;
+            c = ret3;
+        }
+        return Math.min(a,Math.min(b,c));
+    }
+    /** 力扣 309. 买卖股票的最佳时机含冷冻期
+     * https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-cooldown/description/
+     *   状态表示:
+     *             dp[i][0] 为第i天处于买入状态下,的最大利润
+     *             dp[i][1] 为第i天处于可交易状态下,的最大利润
+     *             dp[i][2] 为第i天处于冷却期状态下,的最大利润
+     *    状态转移方程:
+     *            买入: dp[i][0] = Math.max(dp[i-1][0],dp[i-1][1]-prices[i]);
+     *          可交易: dp[i][1] = Math.max(dp[i-1][2],dp[i-1][1]);
+     *          冷却期: dp[i][2] = dp[i-1][0] + prices[i]
+     *     初始化: dp[0][0] = -prices[0] dp[0][1] = 0,dp[0][2] = 0;
+     *     时间复杂度:O(n)
+     *     空间复杂度:O(n)
+     * @author xiaoxie
+     * @date 2024/3/16 22:10
+     * @param prices
+     * @return int
+     */
+    public int maxProfit3(int[] prices) {
+        int n = prices.length;
+        int[][] dp = new int[n+1][3];
+        dp[0][0] = -prices[0];
+        for(int i = 1;i <=n;i++) {
+            dp[i][0] = Math.max(dp[i-1][0],dp[i-1][1]-prices[i-1]);
+            dp[i][1] = Math.max(dp[i-1][2],dp[i-1][1]);
+            dp[i][2] = dp[i-1][0] + prices[i-1];
+        }
+        return Math.max(dp[n][1],dp[n][2]);
+    }
+    /** 714. 买卖股票的最佳时机含手续费
+     * https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/
+     *  状态表示:
+     *             dp[i][0] 第i天为买入,获得的最大利润
+     *             dp[i][1] 第i天为买出,获得的最大利润
+     *     状态转移方程:
+     *             dp[i][0] = Math.max(dp[i-1][0],dp[i-1][1]-prices[i]);
+     *             dp[i][1] = Math.max(dp[i-1][1],dp[i-1][0]+price[i]-fee)
+     *     初始化:
+     *       dp[0][0] = -prices[0]; dp[0][1] = 0;
+     *       时间复杂度为O(n)
+     *       空间复杂度为O(n)
+     * @author xiaoxie
+     * @date 2024/3/16 22:55
+     * @param prices
+     * @param fee
+     * @return int
+     */
+    public int maxProfit(int[] prices, int fee) {
+        int n = prices.length;
+        int[][] dp = new int[n+1][2];
+        dp[0][0] = -prices[0];
+        for(int i = 1;i <= n;i++) {
+            dp[i][0] = Math.max(dp[i-1][0],dp[i-1][1]-prices[i-1]);
+            dp[i][1] = Math.max(dp[i-1][1],dp[i-1][0]+prices[i-1]-fee);
+        }
+        return Math.max(dp[n][0],dp[n][1]);
+    }
+    /** 123. 买卖股票的最佳时机 III
+     * https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iii/
+     *  状态表示:
+     *       f[i][j] 到第i天,进行了j次交易,买入获得的最大价值
+     *       g[i][j] 到第i天,进行了j次交易,卖出(没有持有股票)获得的最大价值
+     *     状态转移方程:
+     *       f[i][j] = Math.max(f[i-1][j],g[i-1][j] -prices[i]);
+     *      // g[i][j] = Math.max(g[i-1][j],f[i-1][j-1] + prices);
+     *        g[i][j] = g[i-1][j];
+     *                 if(j-1 >= 0){
+     *                     g[i][j] = Math.max(g[i][j],f[i-1][j-1] + prices[i-1]);
+     *                 }
+     *     初始化
+     *     int val = -0x3f3f3f3f
+     *       f[0][0] = -prices[0],其他为val
+     *       g[0][0] = 0,其它为val;
+     *       返回值,
+     *       Math.max(g[n][0],Math.max(g[n][1],g[n][2]));
+     *       时间复杂度为O(n*n)
+     *       空间复杂度为O(n*n)
+     * @author xiaoxie
+     * @date 2024/3/16 23:54
+     * @param prices
+     * @return int
+     */
+    public int maxProfit4(int[] prices) {
+        int n = prices.length;
+        int j = 3;
+        int[][] f = new int[n+1][j];
+        int[][] g = new int[n+1][j];
+        int val = -0x3f3f3f3f;
+        f[0][0] = -prices[0];f[0][1] = f[0][2] = val;
+        g[0][0] = 0;g[0][1] = g[0][2] = val;
+        for(int i = 1;i <= n; i++) {
+            for(j = 0;j < 3;j++) {
+                f[i][j] = Math.max(f[i-1][j],g[i-1][j] -prices[i-1]);
+                g[i][j] = g[i-1][j];
+                if(j-1 >= 0){
+                    g[i][j] = Math.max(g[i][j],f[i-1][j-1] + prices[i-1]);
+                }
+            }
+        }
+        return Math.max(g[n][0],Math.max(g[n][1],g[n][2]));
     }
     public static void main(String[] args) {
         int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
