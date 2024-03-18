@@ -18,7 +18,7 @@ import java.util.Scanner;
  * * @author xiaoxie
  * @date 2024年03月14日 21:09
  */
-public class JDBC {
+public class JDBCInsert {
     public static void main(String[] args) throws SQLException {
         //准备工作
         DataSource datasource = new MysqlDataSource();

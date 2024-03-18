@@ -868,8 +868,178 @@ public class Text01 {
         }
         return Math.max(g[n][0],Math.max(g[n][1],g[n][2]));
     }
+    /** 188. 买卖股票的最佳时机 IV
+     * https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iv/description/
+     *  状态表示:
+     *          f[i][k] 表示到第i天,第k次交易,买入所获得的最大利润
+     *          g[i][k] 表示到第i天,第k次交易,卖出(没有持有股票)所获得的最大利润
+     *  状态转移方程:
+     *          f[i][k] = Math.max(f[i-1][k],g[i-1][k]-prices[i]);
+     *          g[i][k] = Math.max(g[i-1][k],f[i-1][k-1] + prices[i]);
+     *          g[i][k] = g[i-1][k]
+     *          k-1>= 0
+     *          g[i][k] = Math.max(g[i][k],f[i-1][k-1] + prices[i]);
+     *  初始化:
+     *          int val = -0x3f3f3f3f;
+     *          除了f[0][0] = -prices[0]
+     *          其他为 val;
+     *          g[0][0] = 0
+     *         其他为val
+     *  返回值:
+     *         g[n][]这一行的最大值
+     *  时间复杂度:O(K*N)
+     *  空间复杂度:O(K*N)
+     * @author xiaoxie
+     * @date 2024/3/17 21:40
+     * @param k
+     * @param prices
+     * @return int
+     */
+    public int maxProfit(int k, int[] prices) {
+        int n = prices.length;
+        int[][] f = new int[n+1][k+1];
+        int[][] g = new int[n+1][k+1];
+        int val = -0x3f3f3f3f;
+        for(int i = 1; i <= k;i++) {
+            f[0][i] = val;
+        }
+        f[0][0] = -prices[0];
+        for(int i = 1; i <= k;i++) {
+            g[0][i] = val;
+        }
+        for(int i = 1; i <= n;i++) {
+            for(int j = 0;j <=k;j++) {
+                f[i][j] = Math.max(f[i-1][j],g[i-1][j]-prices[i-1]);
+                g[i][j] = g[i-1][j];
+                if(j-1>= 0){
+                    g[i][j] = Math.max(g[i][j],f[i-1][j-1] + prices[i-1]);
+                }
+            }
+        }
+        int max = val;
+        for(int i = 0;i <= k;i++) {
+            max = Math.max(max,g[n][i]);
+        }
+        return max;
+    }
+    /** 53. 最大子数组和
+     * https://leetcode.cn/problems/maximum-subarray/description/
+     *   状态表示:
+     *              dp[i] 以i位置为结尾,所有子数组中的的最大值
+     *     状态转移方程:
+     *            dp[i] = Math(num[i] + dp[i-1] + num[i])
+     *     初始化:
+     *             dp[0] = -0x3f3f3f3f;
+     *     返回值:
+     *            所有子数组中的的最大值
+     *     时间复杂度: O(N)
+     *     空间复杂度: O(N)
+     * @author xiaoxie
+     * @date 2024/3/17 22:29
+     * @param nums
+     * @return int
+     */
+    public int maxSubArray(int[] nums) {
+        int n = nums.length;
+        int[] dp = new int[n+1];
+        int val = -0x3f3f3f3f;
+        dp[0] = val;
+        int max = val;
+        for(int i = 1;i <= n;i++) {
+            dp[i] = Math.max(nums[i-1], dp[i-1] + nums[i-1]);
+            max = Math.max(dp[i],max);
+        }
+        return max;
+    }
+    /**53. 最大子数组和
+     * https://leetcode.cn/problems/maximum-subarray/description/
+     * 滚动数组的形式优化空间
+     *  空间复杂度为 O(1)
+     * @author xiaoxie
+     * @date 2024/3/17 22:32
+     * @param nums
+     * @return int
+     */
+    public int maxSubArray2(int[] nums) {
+        int n = nums.length;
+        int val = -0x3f3f3f3f;
+        int first = val;
+        int max = val;
+        for(int i = 1;i <= n;i++) {
+            int ret = Math.max(nums[i-1], first + nums[i-1]);
+            first = ret;
+            max = Math.max(ret,max);
+        }
+        return max;
+    }
+    /** 918. 环形子数组的最大和
+     *  https://leetcode.cn/problems/maximum-sum-circular-subarray/description/
+     * 可以把环形子数组分为两种情况
+     *    1.普通的子数组的最大值.
+     *    2.整个数组和-普通子数组的最小值 = 最大的环形子数组.
+     *    求1和2之中的最大值即可
+     * 状态表示:
+     *    f[i] 为以i为结尾,普通的子数组的最大值.
+     *    g[i] 为以i为结尾,普通的子数组的最小值.
+     * 状态转移方程为
+     *    f[i] = Math.max(nums[i],nums[i] + f[i-1]);
+     *    g[i] = Math.min(nums[i],nums[i] + g[i-1]);
+     * 初始化:
+     *    f[0] = 0
+     *    g[0] =0;
+     * 返回值:
+     *   如果数组里面全都是负数的话,也就是sum==gmin
+     *   直接返回fmax
+     *    f[i] ,g[i] 的最大值
+     *   时间复杂度:O(n)
+     *    空间复杂度O(n)
+     * @author xiaoxie
+     * @date 2024/3/18 22:46
+     * @param nums
+     * @return int
+     */
+    public int maxSubarraySumCircular(int[] nums) {
+        int n = nums.length;
+        int sum = 0,fmax = -0x3f3f3f3f,gmin = 0x3f3f3f3f;
+        int[] f = new int[n+1];
+        int[] g = new int[n+1];
+        for(int i = 1;i <= n;i++) {
+            int x = nums[i-1];
+            f[i] = Math.max(nums[i-1],nums[i-1] + f[i-1]);
+            g[i] = Math.min(nums[i-1],nums[i-1] + g[i-1]);
+            fmax = Math.max(fmax,f[i]);
+            gmin = Math.min(gmin,g[i]);
+            sum += x;
+        }
+        return sum == gmin ? fmax : Math.max(fmax,sum-gmin);
+    }
+    /** 918. 环形子数组的最大和
+     *  https://leetcode.cn/problems/maximum-sum-circular-subarray/description/
+     *  使用滚动数组进行空间优化
+     *  空间复杂度为O(1)
+     * @author xiaoxie
+     * @date 2024/3/18 22:56
+     * @param nums
+     * @return int
+     */
+    public int maxSubarraySumCircular2(int[] nums) {
+        int n = nums.length;
+        int f = 0,g = 0,maxret = -0x3f3f3f3f,minret = 0x3f3f3f3f,sum = 0;
+        for(int i = 1;i <= n;i++) {
+            int x = nums[i-1];
+            int fret = Math.max(x,x+f);
+            int gret = Math.min(x,x+g);
+            f = fret;
+            g = gret;
+            maxret = Math.max(maxret,f);
+            minret = Math.min(minret,g);
+            sum += x;
+        }
+        return minret == sum ? maxret : Math.max(maxret,sum-minret);
+    }
     public static void main(String[] args) {
+
         int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
-       minCostClimbingStairs(cost);
+        System.out.println(minCostClimbingStairs(cost));
     }
 }
