@@ -6,7 +6,10 @@ package LeetCode;/**
  * Time: 19:55
  */
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 /** * @author xiaoxie
  * @date 2024年03月07日 19:55
@@ -1037,9 +1040,335 @@ public class Text01 {
         }
         return minret == sum ? maxret : Math.max(maxret,sum-minret);
     }
+    /** 152. 乘积最大子数组
+     * https://leetcode.cn/problems/maximum-product-subarray/description/
+     * 状态表示:
+     *          f[i] 表示以i位置为结尾,最大的子数组乘积
+     *          g[i] 表示以i位置为结尾,最小的子数组乘积(nums[i]可能小于0)
+     * 状态转移方程:
+     *           f[i] = Math.max(nums[i],nums[i] * f[i-1],nums[i] * g[i-1]);
+     *           g[i] = Math.min(nums[i],nums[i] *f[i-1],nums[i] * g[i-1]);
+     * 初始化:
+     *          f[i] = g[i] = 1;
+     * 返回值:
+     *         max = Max f[i]
+     *时间复杂度为: O(N)
+     *空间复杂度为: O(N)
+     * @author xiaoxie
+     * @date 2024/3/19 10:43
+     * @param nums
+     * @return int
+     */
+    public int maxProduct(int[] nums) {
+        int n = nums.length,max = -0x3f3f3f3f;
+        int[] f = new int[n+1];
+        int[] g = new int[n+1];
+        f[0] = g[0] = 1;
+        for(int i = 1;i <= n;i++) {
+            int x = nums[i-1];
+            f[i] = Math.max(x,Math.max(x * f[i-1],x * g[i-1]));
+            g[i] = Math.min(x,Math.min(x *f[i-1],x * g[i-1]));
+            max = Math.max(max,f[i]);
+        }
+        return max;
+    }
+    /**
+     * 滚动数组的形式来优化空间
+     * 空间复杂度为O(1)
+     * @author xiaoxie
+     * @date 2024/3/19 10:48
+     * @param nums
+     * @return int
+     */
+    public int maxProduct2(int[] nums) {
+        //滚动数组的形式来优化空间
+        int n = nums.length,max = -0x3f3f3f3f,f = 1,g = 1;
+        for(int i = 1;i <= n;i++) {
+            int x = nums[i-1];
+            int fmax = Math.max(x,Math.max(f * x,g * x));
+            int gmin = Math.min(x,Math.min(f*x,g*x));
+            f = fmax;
+            g = gmin;
+            max = Math.max(max,f);
+        }
+        return max;
+    }
+    /** 1567. 乘积为正数的最长子数组长度
+     * https://leetcode.cn/problems/maximum-length-of-subarray-with-positive-product/description/
+     * 状态表示:
+     *           f[i] 表示以i为结尾乘积为正数的最长子数组的长度
+     *           g[i] 表示以i为结尾乘积为负数的最长子数组的长度
+     * 状态转移方程:
+     *          1.nums[i] > 0    f[i] = f[i-1] + 1; g[i] = g[i-1] == 0 ? 0 : g[i-1] + 1;
+     *          2. nums[i] < 0   f[i] = g[i-1] == 0 ? 0 :g[i-1]+ 1 g[i] = f[i-1] +1;
+     * 初始化:
+     *      f[i] = 0 = g[i] = 0;
+     * 返回值:
+     *      max(f[i]);
+     * 时间复杂度: O(N)
+     * 空间复杂度: O(N)
+     * @author xiaoxie
+     * @date 2024/3/19 12:30
+     * @param nums
+     * @return int
+     */
+    public int getMaxLen(int[] nums) {
+        int n = nums.length,max = 0;
+        int[] f = new int[n+1];
+        int[] g = new int[n+1];
+        for(int i = 1;i <= n;i++) {
+            int x = nums[i-1];
+            int ret =g[i-1] == 0 ? 0 : g[i-1] + 1;
+            if(x > 0) {
+                f[i] = f[i-1] + 1;
+                g[i] = ret;
+            }else if(x < 0){
+                f[i] = ret;
+                g[i] = f[i-1] +1;
+            }
+            max = Math.max(max,f[i]);
+        }
+        return max;
+    }
+    /**1567. 乘积为正数的最长子数组长度
+     * https://leetcode.cn/problems/maximum-length-of-subarray-with-positive-product/description/
+     * 用滚动数组形式来优化空间
+     * 空间复杂度为O(1)
+     * @author xiaoxie
+     * @date 2024/3/19 12:42
+     * @param nums
+     * @return int
+     */
+    public int getMaxLen2(int[] nums) {
+        int n = nums.length,max = 0;
+        int f = 0,g = 0,ret1 = 0,ret2 = 0;
+        for(int i = 1;i <= n;i++) {
+            int x = nums[i-1];
+            int ret = g == 0 ? 0 :g + 1;
+            if(x > 0) {
+                ret1 = f + 1;
+                ret2 = ret;
+            }else if(x < 0){
+                ret1 = ret;
+                ret2 = f + 1;
+            }else {
+                ret1 = 0;
+                ret2 = 0;
+            }
+            f = ret1;
+            g = ret2;
+            max = Math.max(max,ret1);
+        }
+        return max;
+    }
+    /** 413. 等差数列划分
+     * https://leetcode.cn/problems/arithmetic-slices/description/
+     * 状态表示:
+     *           dp[i] 表示为以i为结尾时所有为等差数组的子数组个数
+     * 状态转移方程:
+     *           dp[i] =  a-b == b-c ? dp[i-1] + 1 : 0;
+     * 初始值:
+     *           dp[0] = dp[1] = 0;
+     * 返回值:
+     *           dp[i]数组的总和;
+     * 时间复杂度: O(N)
+     * 空间复杂度: O(N)
+     * @author xiaoxie
+     * @date 2024/3/19 14:50
+     * @param nums
+     * @return int
+     */
+    public int numberOfArithmeticSlices(int[] nums) {
+        int n = nums.length,sum = 0;
+        if(n < 3) return 0;
+        int[] dp = new int[n];
+        for(int i = 2;i < n;i++) {
+            int a = nums[i-2];
+            int b = nums[i-1];
+            int c = nums[i];
+            dp[i] =  a-b == b-c ? dp[i-1] + 1 : 0;
+            sum += dp[i];
+        }
+        return sum;
+    }
+    /** 413. 等差数列划分
+     * https://leetcode.cn/problems/arithmetic-slices/description/
+     * 使用滚动数组优化空间
+     * 空间复杂度: O(1)
+     * @author xiaoxie
+     * @date 2024/3/19 15:00
+     * @param nums
+     * @return int
+     */
+    public int numberOfArithmeticSlices2(int[] nums) {
+        int n = nums.length,sum = 0;
+        if(n < 3) return 0;
+        int tmp = 0;
+        for(int i = 2;i < n;i++) {
+            int ret =  nums[i-2]-nums[i-1] == nums[i-1]-nums[i] ? tmp + 1 : 0;
+            tmp = ret;
+            sum += tmp;
+        }
+        return sum;
+    }
+    /** 978. 最长湍流子数组
+     * https://leetcode.cn/problems/longest-turbulent-subarray/description/
+     * 状态表示:
+     *         f[i] 表示为以i为结尾,最后呈显上升趋势时的最大湍流子数组的长度
+     *         g[i] 表示为以i为结尾,最后呈现下降趋势时的最大湍流子数组的长度
+     * 状态转移方程:
+     *         int a = arr[i],b = arr[i-1];
+     *         f[i]
+     *         1.a < b  f[i] = 1; g[i] = f[i-1] + 1
+     *         2.a > b  f[i] =  g[i-1] + 1 g[i] = 1;
+     *         3.a = b  f[i] = 1;g[i] = 1;
+     * 初始化:
+     *         f[i] 全部设为1;
+     *         g[i] 全部设为1;
+     *         状态转移方程就不需要考虑等于1的情况了
+     * 因为最坏情况下最大湍流子数组的长度为1;
+     * 返回值:
+     *         f[i] 和 g[i] 里的最大值
+     * 时间复杂度:
+     *          O(N)
+     * 空间复杂度:
+     *          O(N)
+     *
+     * @author xiaoxie
+     * @date 2024/3/19 17:18
+     * @param arr
+     * @return int
+     */
+    public int maxTurbulenceSize(int[] arr) {
+        int n = arr.length,max = 1;
+        int[] f = new int[n+1];
+        int[] g = new int[n+1];
+        for(int i = 0;i < n;i++) {
+            f[i] = g[i] = 1;
+        }
+        for(int i = 2;i <= n;i++) {
+            int a = arr[i-1],b = arr[i-2];
+            if(a < b) {
+                g[i] = f[i-1] + 1;
+                max = Math.max(max,g[i]);
+            }else if(a > b) {
+                f[i] =  g[i-1] + 1;
+                max = Math.max(max,f[i]);
+            }
+        }
+        return max;
+    }
+    /** 978. 最长湍流子数组
+     * https://leetcode.cn/problems/longest-turbulent-subarray/description/
+     * 利用滚动数组优化空间复杂度
+     * 空间复杂度: O(1)
+     * @author xiaoxie
+     * @date 2024/3/19 17:36
+     * @param arr
+     * @return int
+     */
+    public int maxTurbulenceSize2(int[] arr) {
+        int n = arr.length;
+        int f = 1,g = 1,max = 1;
+        for(int i = 1;i < n;i++) {
+            if(arr[i] < arr[i-1]) {
+                g  = f + 1;
+                f = 1;
+                max = Math.max(max,g);
+            }else if(arr[i] > arr[i-1]) {
+                f = g+ 1;
+                g = 1;
+                max = Math.max(max,f);
+            }else {
+                f = 1;
+                g = 1;
+            }
+        }
+        return max;
+    }
+    /** 139. 单词拆分
+     * https://leetcode.cn/problems/word-break/description/
+     * 状态表示:
+     *           dp[i] 表示[0,i]位置,是否可以利用字典中的单词拼接而成
+     * 状态转移方程:
+     *     用j表示s中单词的开始
+     *           1.dp[j-1] == true && s(j,i)在字典中.
+     *           2.false;
+     * 初始化:
+     *           dp[0] = true,wordDict 存在HashSet中
+     *           s = " " + s;
+     * 时间复杂度: O(n*n);
+     * 空间复杂度为: O(n);
+     * @author xiaoxie
+     * @date 2024/3/19 20:06
+     * @param s
+     * @param wordDict
+     * @return boolean
+     */
+    public boolean wordBreak(String s, List<String> wordDict) {
+        int n = s.length();
+        boolean[] dp = new boolean[n+1];
+        s = " " + s;
+        dp[0] = true;
+        Set<String> set = new HashSet(wordDict);
+        for(int i = 1;i <= n ;i++) {
+            for(int j = i; j >= 1;j--) {
+                if(dp[j-1] && set.contains(s.substring(j,i+1))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        return dp[n];
+    }
+    /** 467. 环绕字符串中唯一的子字符串
+     * https://leetcode.cn/problems/unique-substrings-in-wraparound-string/description/
+     * 状态表示:
+     *          dp[i]表示以i位置为结尾,所有子串在base里的个数
+     * 状态转移方程:
+     *           if(s.charAt(i-1)+1 == s.charAt(i) || (s.charAt(i-1) == 'z'&&  s.charAt(i) == 'a')
+     *           dp[i] += dp[i-1];
+     * 初始化:
+     *           dp数组里的值全为1;
+     * 返回值:
+     *        去重
+     *        相同字符串的dp值我们取最大的即可
+     *        1.定义一个长度为26的数组
+     *        2.里面保持的值我们取最大的dp值
+     *        返回该数组里的和
+     * 时间复杂度: O(n)
+     * 空间复杂度: O(n)
+     * @author xiaoxie
+     * @date 2024/3/19 21:22
+     * @param s
+     * @return int
+     */
+    public int findSubstringInWraproundString(String s) {
+        int n = s.length();
+        if(n == 1) return 1;
+        int[] dp = new int[n];
+        for(int i = 0;i< n;i++) {
+            dp[i] = 1;
+        }
+        for(int i = 1;i < n;i++) {
+            if(s.charAt(i-1)+1 == s.charAt(i) || (s.charAt(i-1) == 'z'&& s.charAt(i) == 'a')) {
+                dp[i] += dp[i-1];
+            }
+        }
+        int[] ret = new int[26];
+        int ans = 0;
+        for(int i = 0;i < n;i++) {
+            ret[s.charAt(i)-'a'] = Math.max(dp[i], ret[s.charAt(i)-'a']);
+        }
+        for(int num : ret) {
+            ans += num;
+        }
+        return ans;
+    }
     public static void main(String[] args) {
-
-        int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
-        System.out.println(minCostClimbingStairs(cost));
+        String s = "abcd";
+        System.out.println(s.charAt(1)+1 == s.charAt(2));
+        //int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
+        //System.out.println(minCostClimbingStairs(cost));
     }
 }

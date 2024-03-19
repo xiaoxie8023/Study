@@ -124,7 +124,7 @@ public class AVLTree {
       subR.bf = 0;
   }
   /**
-   * 右单旋如果左树高的话需要调整左树的高度
+   * 右单旋左树高的话需要调整左树的高度
    * @author xiaoxie
    * @date 2024/3/6 15:01
    * @param parent
