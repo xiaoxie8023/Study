@@ -1366,9 +1366,7 @@ public class Text01 {
         return ans;
     }
     public static void main(String[] args) {
-        String s = "abcd";
-        System.out.println(s.charAt(1)+1 == s.charAt(2));
-        //int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
-        //System.out.println(minCostClimbingStairs(cost));
+        int[] cost = new int[] {1,100,1,1,1,100,1,1,100,1};
+        System.out.println(minCostClimbingStairs(cost));
     }
 }
