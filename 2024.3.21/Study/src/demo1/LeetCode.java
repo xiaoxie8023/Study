@@ -7,6 +7,8 @@ package demo1;/**
  */
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 /** * @author xiaoxie
@@ -204,6 +206,126 @@ public class LeetCode {
             max = Math.max(max,dp[i]);
         }
         return max;
+    }
+    /** 1218. 最长定差子序列
+     * 这个代码思想巧妙,感觉自己还得多学
+     * https://leetcode.cn/problems/longest-arithmetic-subsequence-of-given-difference/description/
+     * 状态表示:
+     *        dp[i]表示为以i为结尾,所有子序列中,最长等差子序列的长度
+     * 状态转移方程:
+     *        1.长度为1,dp[i] = 1;
+     *        2.长度大于1:
+     *        arr[j] = arr[i] - d
+     *        dp[i] = 离i最近的满足上述条件的arr[j] arr[j] + 1;
+     * 初始化:
+     *        根据上述的需求可以使用哈希表来模拟动态规划的需求
+     * 时间复杂度:O(n)
+     * 空间复杂度:O(n)
+     * @author xiaoxie
+     * @date 2024/3/22 9:31
+     * @param arr
+     * @param difference
+     * @return int
+     */
+    public int longestSubsequence(int[] arr, int difference) {
+        Map<Integer,Integer> map = new HashMap<>();
+        int ret = 1;
+        for(int num : arr) {
+            map.put(num,map.getOrDefault((num-difference),0) +1);
+            ret = Math.max(ret,map.get(num));
+        }
+        return ret;
+    }
+    /** 873. 最长的斐波那契子序列的长度
+     * https://leetcode.cn/problems/length-of-longest-fibonacci-subsequence/description/
+     * 优化:
+     *       使用哈希表来使相应的值和下标有映射关系,减少时间复杂度
+     * 状态表示:
+     *         dp[i][j]:以i位置和j位置结尾的子序列,中最长的斐波那契子序列的长度并规定,i在前j在后
+     * 状态转移方程:
+     *           nums[k] = a,nums[i] = b,nums[j] = c
+     *           if(a = c - b)
+     *           1.a存在,并且,a < b dp[i][j] = dp[k][i] + 1
+     *           2.a存在,并且,a > b dp[i][j] = 2;
+     *           3.a不存在 dp[i][j] = 2
+     * 初始化:
+     *         dp[i][j]都设为2;
+     * 填表顺序:  从上往下
+     * 返回值:  Math.max(ret)  ret < 3 ? 0 : ret
+     * 时间复杂度为: O(N*N)
+     * 空间复杂度为: O(N*N)
+     * @author xiaoxie
+     * @date 2024/3/22 22:12
+     * @param nums
+     * @return int
+     */
+    public int lenLongestFibSubseq(int[] nums) {
+        int n = nums.length;
+        Map<Integer,Integer> map = new HashMap<>();
+        for(int i = 0;i < n;i++) {
+            map.put(nums[i],i);
+        }
+        int[][] dp = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for(int j = 0; j < n;j++) {
+                dp[i][j] = 2;
+            }
+        }
+        int ret = 2;
+        for(int j = 2;j < n;j++) {
+            for(int i = 1;i < j;i++) {
+                int a = nums[j] - nums[i];
+                if(a < nums[i] && map.containsKey(a)) {
+                    dp[i][j] = dp[map.get(a)][i] + 1;
+                    ret = Math.max(ret,dp[i][j]);
+                }
+            }
+        }
+        return ret < 3 ? 0 : ret;
+    }
+    /** 1027. 最长等差数列
+     * https://leetcode.cn/problems/longest-arithmetic-subsequence/description/
+     * 优化:
+     *       一边dp,一边填下标到哈希表 固定倒数第二个,枚举倒数第一个;
+     * 状态表示:
+     *          dp[i][j] 表示以i结尾,以j结尾的所有子序列中,最长等差子序列的长度。i < j
+     * 状态转移方程:
+     *         nums[k] = a,nums[i] = b,nums[j] = c c-b = b-a ->  a = 2b-c;
+     *         if(a存在 && a < i) dp[i][j] = dp[k][i] + 1
+     *         else if(a存在 && a > i) dp[i][j] = 2;
+     *         else (a不存在) dp[i][j] = 2
+     * 初始化:
+     *         dp[i][j]全设为2;
+     * 填表顺序:
+     *         固定倒数第二个,枚举倒数第一个;
+     * 返回值:  Max(ret)
+     * 时间复杂度: O(N*N)
+     * 空间复杂度: O(N*N)
+     * @author xiaoxie
+     * @date 2024/3/22 23:05
+     * @param nums
+     * @return int
+     */
+    public int longestArithSeqLength(int[] nums) {
+        Map<Integer,Integer> map = new HashMap<>();
+        map.put(nums[0],0);
+        int n = nums.length;
+        int[][] dp = new int[n][n];
+        for(int i = 0;i < n;i++) {
+            Arrays.fill(dp[i],2);
+        }
+        int ret = 2;
+        for(int i = 1; i < n;i++) {
+            for(int j = i+ 1;j < n;j++) {
+                int a = 2*nums[i] - nums[j];
+                if(map.containsKey(a)){
+                    dp[i][j] = dp[map.get(a)][i] + 1;
+                    ret = Math.max(ret,dp[i][j]);
+                }
+            }
+            map.put(nums[i],i);
+        }
+        return ret;
     }
 
     public static void main(String[] args) {
