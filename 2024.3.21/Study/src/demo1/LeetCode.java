@@ -6,10 +6,7 @@ package demo1;/**
  * Time: 22:40
  */
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /** * @author xiaoxie
  * @date 2024年03月19日 22:40
@@ -326,6 +323,292 @@ public class LeetCode {
             map.put(nums[i],i);
         }
         return ret;
+    }
+    /** 446. 等差数列划分 II - 子序列
+     *  https://leetcode.cn/problems/arithmetic-slices-ii-subsequence/
+     *  优化:
+     *       使用哈希表把nums[i],的值和下标数组有映射关系;
+     * 状态表示:
+     *          dp[i][j]以i为结尾,和以j为结尾的所有子序列中,所有等差子序列的数目 其中 i < j
+     * 状态转移方程:
+     *          nums[k] = a,nums[i] = b,nums[j] = c;
+     *          if(a = 2b-c)
+     *          dp[i][j] += dp[k][i] + 1(这里加1)是因为至少有三个元素 可能会出现,只有a,b 两个元素的情况
+     * 初始化:
+     *         dp[i][j]全为0
+     * 填表顺序:
+     *         先固定最后一个,在枚举倒数第二个
+     * 返回值:
+     *         dp[i][j].sum();
+     * 时间复杂度: O(N*N)
+     * 空间复杂度: O(N*N)
+     * @author xiaoxie
+     * @date 2024/3/23 0:29
+     * @param nums
+     * @return int
+     */
+    public int numberOfArithmeticSlices(int[] nums) {
+        Map<Long, List<Integer>> map = new HashMap<>();
+        int n = nums.length;
+        for(int i = 0;i < n;i++) {
+            long tmp = (long)nums[i];
+            if(!map.containsKey(tmp)) {
+                map.put(tmp,new ArrayList<Integer>());
+            }
+            map.get(tmp).add(i);
+        }
+        int sum = 0;
+        int[][] dp = new int[n][n];
+        for(int j = 2; j < n;j++) {
+            for(int i = 1;i < j;i++) {
+                long a = 2L*nums[i] - (long)nums[j];
+                if(map.containsKey(a)) {
+                    for(int k : map.get(a)) {
+                        if(k < i) {
+                            dp[i][j] += dp[k][i] + 1;
+                        }else {
+                            break;
+                        }
+                    }
+                }
+                sum += dp[i][j];
+            }
+        }
+        return sum;
+    }
+    /** 647. 回文子串
+     * https://leetcode.cn/problems/palindromic-substrings/description/
+     * 前提,我们可以把所有的回文信息填到dp表中--N*N 很重要
+     * 状态表示 :
+     *           dp[i][j]表示s在[i,j]位置是否为回文子串 i <= j
+     * 状态转移方程:
+     *           if(s.charAt(i) == s.charAt(j))
+     *           1.i ==  j -> true
+     *           2.i + 1  == j -> true;
+     *           3. i + 1 < j dp[i][j] = dp[i+1][j-1];
+     * 填表顺序:
+     *           从下往上
+     * 返回值:
+     *           dp[i][j]中true的个数
+     * 时间复杂度: O(N*N)
+     * 空间复杂度: O(N*N)
+     * @author xiaoxie
+     * @date 2024/3/23 17:51
+     * @param s
+     * @return int
+     */
+    public int countSubstrings(String s) {
+        int n = s.length();
+        boolean[][] dp = new boolean[n][n];
+        int ret = 0;
+        for(int i = n-1;i>= 0;i--) {
+            for(int j = i;j < n;j++) {
+                if(s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] = i + 1 < j ?dp[i+1][j-1] : true;
+                    if(dp[i][j] == true)
+                        ret++;
+                }
+            }
+        }
+        return ret;
+    }
+    /**5. 最长回文子串
+     * https://leetcode.cn/problems/longest-palindromic-substring/description/
+     * 状态表示:
+     *          dp[i][j]表示s在[i,j]位置上的是否为回文子串
+     * 状态转移方程:
+     *          if(s.charAt(i) == s.charAt(j))
+     *          1.i == j true
+     *          2.i + 1 = j true
+     *          3.i + 1  < j dp[i][j] = dp[i+1][j-1];
+     * 填表顺序:
+     *          从下往上
+     * 返回值:
+     *        返回最大的回文子串(s.substring())
+     * 时间复杂度:O(N*N)
+     * 空间复杂度:O(N*N)
+     * @author xiaoxie
+     * @date 2024/3/23 19:27
+     * @param s
+     * @return java.lang.String
+     */
+    public String longestPalindrome(String s) {
+        int n = s.length();
+        int x = 0,y = 0,max = 0;
+        boolean[][] dp = new boolean[n][n];
+        for(int i = n-1;i>=0;i--) {
+            for(int j = i;j<n;j++) {
+                if(s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] = i + 1 < j ? dp[i+1][j-1] : true;
+                    if(dp[i][j]&&(j-i) > max) {
+                        x = i;
+                        y = j;
+                        max = j-i;
+                    }
+                }
+            }
+        }
+        return s.substring(x,y+1);
+    }
+    /** 1745. 分割回文串 IV
+     * https://leetcode.cn/problems/palindrome-partitioning-iv/description/
+     * 状态表示:
+     *          dp[i][j]表示s在[i,j]是否为回文子串
+     * 状态转移方程:
+     *           if(s.charAt(i) == s.charAt(j))
+     *           1.i = j true
+     *           2. i+1 = j true
+     *           3. i+1 < j dp[i][j] = dp[i+1][j-1]
+     * 填表顺序:
+     *           从下往上
+     * 返回值:
+     *        判断
+     *         dp[0,i-1]&&dp[i,j]&&dp[j+1,n-1]
+     * 时间复杂度: O(N*N)
+     * 空间复杂度: O(N*N)
+     * @author xiaoxie
+     * @date 2024/3/23 20:19
+     * @param s
+     * @return boolean
+     */
+    public boolean checkPartitioning(String s) {
+        int n = s. length();
+        boolean[][] dp = new boolean[n][n];
+        for(int i = n-1;i >= 0;i--) {
+            for(int j = i;j < n;j++) {
+                if(s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] = i+1 < j ? dp[i+1][j-1] : true;
+                }
+            }
+        }
+        for(int i = 1;i < n-1;i++) {
+            for(int j = i;j < n-1;j++) {
+                if(dp[0][i-1] && dp[i][j] && dp[j+1][n-1]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /** 132. 分割回文串 II
+     * https://leetcode.cn/problems/palindrome-partitioning-ii/description/
+     * 优化: dp[i][j]表示s在位置[i,j]上是否为回文子串
+     * 状态表示:
+     *           dp[i]表示为s在[0,i]上的回文子串的最少分割次数
+     * 状态转移方程:
+     *           1.0-i位置的子串为回文子串 0
+     *           2..0-i位置的子串不是回文子串,切割后为回文子串
+     *           0 < j <=i
+     *           1.j 到 i 位置为回文子串: Math.min(dp[j-1] + 1)
+     *           2.j 到 i 位置不是回文子串:不考虑
+     * 初始值:
+     *           因为求的是最小值,所以dp[i]要被初始化成最小值
+     * 返回值:
+     *           dp[n-1];
+     * 时间复杂度:O(N*N)
+     * 空间复杂度:O(N*N)
+     * @author xiaoxie
+     * @date 2024/3/23 21:54
+     * @param s
+     * @return int
+     */
+    public int minCut(String s) {
+        int n = s.length();
+        boolean[][] ret = new boolean[n][n];
+        for(int i = n-1;i>=0;i--) {
+            for(int j = i;j < n;j++) {
+                if(s.charAt(i) == s.charAt(j)) {
+                    ret[i][j] = i + 1 < j ? ret[i+1][j-1] : true;
+                }
+            }
+        }
+        int val = 0x3f3f3f3f;
+        int[] dp = new int[n];
+        Arrays.fill(dp,val);
+        for(int i = 0;i < n;i++) {
+            if(ret[0][i]) {
+                dp[i] = 0;
+            }else {
+                for(int j = 1;j <=i;j++) {
+                    if(ret[j][i]) {
+                        dp[i] = Math.min(dp[i],dp[j-1] + 1);
+                    }
+                }
+            }
+        }
+        return dp[n-1];
+    }
+    /**516. 最长回文子序列
+     * https://leetcode.cn/problems/longest-palindromic-subsequence/description/
+     * 状态表示:
+     *          dp[i][j]在s[i,j]位置时的最长的回文子序列的长度
+     * 状态转移方程:
+     *              1.  s.charAt(i) == s.charAt(j)
+     *                  1. i == j  1
+     *                  2. i + 1 == j 2
+     *                  3. i + 1 < j dp[i + 1][j-1] + 2
+     *             2.   s.charAt(i) != s.charAt(j)
+     *                  dp[i][j] = Math.max(dp[i][j-1],dp[i+1][j-1]);
+     * 填表顺序:
+     *             从上往下,从左往右
+     * 返回值为:    dp[0][n-1]
+     * 时间复杂度:O(N*N)
+     * 空间复杂度:O(N*N)
+     * @author xiaoxie 
+     * @date 2024/3/23 23:19
+     * @param s 
+     * @return int 
+     */
+    public int longestPalindromeSubseq(String s) {
+        int n = s.length();
+        int[][] dp = new int[n][n];
+        for(int i = n-1;i >= 0;i--) {
+            dp[i][i] = 1;
+            for(int j = i + 1; j < n;j++) {
+                if(s.charAt(i) == s.charAt(j)){
+                    dp[i][j] = dp[i + 1][j-1] + 2;
+                }else{
+                    dp[i][j] = Math.max(dp[i+1][j],dp[i][j-1]);
+                }
+            }
+        }
+        return dp[0][n-1];
+    }
+    /**1312. 让字符串成为回文串的最少插入次数
+     *https://leetcode.cn/problems/minimum-insertion-steps-to-make-a-string-palindrome/description/
+     * 状态表示:
+     *           dp[i][j]表示s在[i,j]区间的子串中,使它成为回文串的最少插入次数
+     * 状态转移方程:
+     *             1.if(s.charAt(i) == s.charAt(j))
+     *                1.i == j 0
+     *                2.i + 1 = j 0;
+     *                3.i + 1 < j dp[i+1][j-1]
+     *             2. s.charAt(i) != s.charAt(j)
+     *             Math.min(dp[i][j-1] + 1,dp[i+1][j]+1)
+     * 填表顺序:
+     *             从下到上,从左到右
+     * 返回值
+     *       dp[0][n-1]
+     * 时间复杂度: O(N*N)
+     * 空间复杂度: O(N*N)
+     * @author xiaoxie 
+     * @date 2024/3/23 23:50
+     * @param s 
+     * @return int 
+     */
+    public int minInsertions(String s) {
+        int n = s.length();
+        int[][] dp = new int[n][n];
+        for(int i = n-1;i >= 0;i--) {
+            for(int j = i+1;j < n;j++) {
+                if(s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] = dp[i+1][j-1];
+                }else {
+                    dp[i][j] =  Math.min(dp[i][j-1],dp[i+1][j]) + 1;
+                }
+            }
+        }
+        return dp[0][n-1];
     }
 
     public static void main(String[] args) {
