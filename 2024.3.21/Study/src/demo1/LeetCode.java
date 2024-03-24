@@ -610,7 +610,311 @@ public class LeetCode {
         }
         return dp[0][n-1];
     }
+    /** 1143. 最长公共子序列
+     * https://leetcode.cn/problems/longest-common-subsequence/description/
+     * 状态表示:
+     *          dp[i][j]表示s1在[0,i]区间,s2在[0,j]区间内最长 公共子序列 的长度
+     * 状态转移方程:
+     *              1.s1.charAt(i) == s2.charAt(j)
+     *              dp[i][j] = dp[i-1][j-1] +1
+     *              2.s1.charAt(i) != s2.charAt(j)
+     *               1. dp[i][j] = dp[i][j-1]
+     *               2. dp[i][j] = dp[i][j-1]
+     *               3. dp[i][j] = dp[i-1][j-1]
+     *               1和2都包含了3,并且因为求的是最长的长度所以不需要考虑3
+     * 初始化:
+     *         引入空串的概念,所以要加一行一列 s1 = " "+s1;s2= " "+s2;
+     * 返回值:
+     *        dp[n][m]
+     * 时间复杂度(n*m)
+     * 空间复杂度(n*m)
+     * @author xiaoxie
+     * @date 2024/3/24 10:55
+     * @param s1
+     * @param s2
+     * @return int
+     */
+    public int longestCommonSubsequence(String s1, String s2) {
+        int n = s1.length();
+        int m = s2.length();
+        s1 = " " + s1;
+        s2 = " " + s2;
+        int[][] dp = new int[n+1][m+1];
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1;j <= m;j++) {
+                if(s1.charAt(i) == s2.charAt(j)) {
+                    dp[i][j] = dp[i-1][j-1] +1;
+                }else {
+                    dp[i][j] = Math.max(dp[i][j-1],dp[i-1][j]);
+                }
+            }
+        }
+        return dp[n][m];
+    }
+    /**1035. 不相交的线
+     *https://leetcode.cn/problems/uncrossed-lines/description/
+     * 这道题实际上是求最长公共子序列
+     * 状态表示:
+     *          dp[i][j]表示nums1在[0,i]区间,nums2在区间[0,j]中,最长公共子序列
+     * 状态转移方程:
+     *           1.nums1[i] = nums2[j] dp[i][j] = dp[i-1][j-1] + 1
+     *           2.nums1[i] != nums2[j]
+     *             1.dp[i][j] = dp[i][j-1]
+     *             2.dp[i][j] = dp[i-1][j]
+     *         求 1,2的最大值
+     * 初始化:
+     *         加一行一列
+     * 返回值:
+     *         dp[n][m];
+     * @author xiaoxie 
+     * @date 2024/3/24 15:33
+     * @param nums1
+     * @param nums2 
+     * @return int 
+     */
+    public int maxUncrossedLines(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        int m = nums2.length;
+        int[][] dp = new int[n+1][m+1];
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1;j <= m; j++) {
+                if(nums1[i-1] == nums2[j-1]) {
+                    dp[i][j] = dp[i-1][j-1] + 1;
+                }else {
+                    dp[i][j] = Math.max(dp[i][j-1],dp[i-1][j]);
+                }
+            }
+        }
+        return dp[n][m];
+    }
+    /** 115. 不同的子序列
+     * https://leetcode.cn/problems/distinct-subsequences/
+     * 状态表示:
+     *         dp[i][j]表示s在[0,i]区间上的子序列,包含t在[0,j]区间上的子串的个数
+     * 状态转移方程:
+     *         1.子序列的结尾为i if(s.charAt(i) == t.charAt(i)) dp[i][j] = dp[i-1][j-1];
+     *         2.子序列的结尾不为i dp[i][j] = dp[i-1][j];
+     *         总的dp[i][j] = dp[i-1][j] +  dp[i-1][j-1](条件);
+     * 初始化:
+     *         因为j为空串的话,无论如何都会有1个,而s为空串,就不存在为0
+     *         第一行除了第一个为1之外,别的为0,第一列为为1
+     * 返回值: t 出现的个数
+     * 时间复杂度: O(NM)
+     * 空间复杂度: O(NM)
+     * @author xiaoxie
+     * @date 2024/3/24 16:43
+     * @param s
+     * @param t
+     * @return int
+     */
+    public int numDistinct(String s, String t) {
+        int n = s.length(),m = t.length();
+        if(n < m) return 0;
+        int[][] dp = new int[n+1][m+1];
+        for(int i = 0;i <=n;i++) {
+            dp[i][0] = 1;
+        }
 
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1;j <= m;j++) {
+                if(s.charAt(i-1) == t.charAt(j-1)) {
+                    dp[i][j] = (dp[i-1][j] + dp[i-1][j-1]);
+                }else {
+                    dp[i][j] = dp[i-1][j];
+                }
+            }
+        }
+
+        return dp[n][m];
+    }
+    /** 44. 通配符匹配
+     * https://leetcode.cn/problems/wildcard-matching/description/
+     * 状态表示:
+     *          dp[i][j]表示在p在区间[0,j]的字符串是否匹配s在[0,i]区间的字符串
+     * 状态转移方程:
+     *           1.p[j] 为普通字符
+     *           dp[i][j] = s.charAt(i) == p.charAt(j) && dp[i-1][j-1] == true;
+     *           2.p[j] 为"?"
+     *           dp[i][j] = dp[i-1][j-1] = true;
+     *           3.p[j] 为"*"
+     *             1.p[j]表示空串 dp[i][j] = dp[i][j-1]
+     *             2.p[j]表示1个字符 dp[i][j] = dp[i-1][j-1]
+     *             3.p[j]表示2个字符 dp[i][j] = dp[i-2][j-1]
+     *             4.p[j]表示3个字符 dp[i][j] = dp[i-3][j-1]
+     *             5...........
+     * 优化:    3.p[j] 为"*"
+     *          1.数学方法
+     *          dp[i][j]    = dp[i][j-1] + dp[i-1][j-1] + dp[i-2][j-1] + dp[i-3][j-1] + .....
+     *          dp[i-1][j]  =  dp[i-1][j-1] + dp[i-2][j-1] + dp[i-3][j-1];
+     *          dp[i][j]    = dp[i][j-1] || dp[i-1][j]
+     *          2.根据状态表示以及实际情况
+     *          1. p[j]表示空串 dp[i][j] = dp[i][j-1]
+     *          2. p[j]表示1个字符但不清除   dp[i][j] =dp[i-1][j]  继续递推,下一个要么等于空串要么表示1个字符但不清除
+     *           dp[i][j]    = dp[i][j-1] || dp[i-1][j]
+     * 初始化:
+     *         加一行和一列,分别表示s,t空串的情况
+     *         1.s,t都为空串, true
+     *         2.s为空串: 只要t有一个其他字符,就为false
+     *         3.t为空串: falase
+     * 返回值: dp[n][m]
+     * 时间复杂度: O(N*M)
+     * 空间复杂度: O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/24 18:21
+     * @param ss
+     * @param pp
+     * @return boolean
+     */
+    public boolean isMatch(String ss, String pp) {
+        int n = ss.length(),m = pp.length();
+        boolean[][] dp = new boolean[n+1][m+1];
+        pp = " " + pp;
+        ss = " " + ss;
+        char[] p = pp.toCharArray();
+        char[] s = ss.toCharArray();
+        dp[0][0] = true;
+        for(int i = 1;i <= m;i++) {
+            if(p[i] == '*') {
+                dp[0][i] = true;
+            }else {
+                break;
+            }
+        }
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1;j <= m;j++) {
+                if(p[j] != '?' && p[j] != '*') {
+                    dp[i][j] = s[i] == p[j] && dp[i-1][j-1];
+                }else if(p[j] == '?') {
+                    dp[i][j] = dp[i-1][j-1];
+                }else {
+                    dp[i][j] = dp[i][j-1] || dp[i-1][j];
+                }
+            }
+        }
+        return dp[n][m];
+    }
+    /** 10. 正则表达式匹配
+     * https://leetcode.cn/problems/regular-expression-matching/description/
+     * 状态表示:
+     *                dp[i][j]表示在p在区间[0,j]的子序列是否匹配s在[0,i]区间的字符串
+     *       状态转移方程:
+     *                1.p[j] 为普通字符
+     *                dp[i][j] = s.charAt(i) == p.charAt(j) && dp[i-1][j-1] == true;
+     *                2.p[j] 为"?"
+     *                dp[i][j] = dp[i-1][j-1] = true;
+     *                3.p[j] 为"*"
+     *                 1. p[j-1] = '.'
+     *                   1. '.''*'表示空串 dp[i][j-2]
+     *                   2. '.''*'表示1个字符 dp[i-1][j-2]
+     *                   2. '.''*'表示2个字符 dp[i-2][j-2]
+     *                   2. '.''*'表示3个字符 dp[i-3][j-2]
+     *                   3  ................
+     *     优化: 数学方法
+     *                  dp[i][j] = dp[i][j-2] + dp[i-1][j-2] + dp[i-2][j-2]+dp[i-3][j-2]
+     *                  dp[i-1][j] = dp[i-1][j-2] + + dp[i-2][j-2]+dp[i-3][j-2]
+     *                  dp[i][j] = dp[i][j-2] ||  dp[i-1][j] && p[j-1] = '.'
+     *                 1.p[j]表示空串 dp[i][j] = dp[i][j-2]
+     *                  2.p[j]表示1个字符 dp[i][j] = p[j-1] == s[i] && dp[i-1][j-2]
+     *                  3.p[j]表示2个字符 dp[i][j] = p[j-1] == s[i] && dp[i-2][j-2]
+     *                  4.p[j]表示3个字符 dp[i][j] = p[j-1] == s[i] && dp[i-3][j-2]
+     *                 5...........
+     *       优化:    3.p[j] 为"*"
+     *                1.数学方法
+     *               dp[i][j]    = dp[i][j-2] + dp[i-1][j-1] + dp[i-2][j-2] + dp[i-3][j-2] + .....
+     *               dp[i-1][j]  =  dp[i-1][j-2] + dp[i-2][j-2] + dp[i-3][j-2];
+     *               dp[i][j]    = dp[i][j-2] || dp[i-1][j] &&  p[j-1] == s[i]
+     *               2.根据状态表示以及实际情况
+     *               1. p[j]表示空串 dp[i][j] = dp[i][j-2]
+     *               2. p[j]表示1个字符但不清除   dp[i][j] =dp[i-1][j]  继续递推,下一个要么等于空串要么表示1个字符但不清除
+     *                dp[i][j]    = dp[i][j-1] || dp[i-1][j] &&  p[j-1] == s[i]
+     *      初始化:
+     *              加一行和一列,分别表示s,t空串的情况
+     *              1.s,t都为空串, true
+     *             2.s为空串:必须'*' 为偶数位连续出现时,就为false
+     *              3.t为空串: falase
+     *      返回值: dp[n][m]
+     *      时间复杂度: O(N*M)
+     *      空间复杂度: O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/24 21:55
+     * @param ss
+     * @param pp
+     * @return boolean
+     */
+    public boolean isMatch2(String ss, String pp) {
+        int n = ss.length(),m = pp.length();
+        boolean[][] dp = new boolean[n+1][m+1];
+        ss = " " + ss;
+        pp = " " + pp;
+        char[] s = ss.toCharArray();
+        char[] p = pp.toCharArray();
+        dp[0][0] = true;
+        for(int i = 2; i <= m;i+= 2) {
+            if(p[i] == '*') dp[0][i] = true;
+            else break;
+        }
+        for(int i = 1; i <= n;i++) {
+            for(int j = 1;j <= m;j++) {
+                if(p[j] == '*') {
+                    dp[i][j] = dp[i][j-2] || (p[j-1] == s[i] || p[j-1] == '.') && dp[i-1][j];
+                }else {
+                    dp[i][j] = (p[j] == '.' || p[j] == s[i]) && dp[i-1][j-1];
+                }
+            }
+        }
+        return dp[n][m];
+    }
+
+    /**97. 交错字符串
+     *https://leetcode.cn/problems/interleaving-string/description/
+     *状态表示:
+     *          dp[i][j]表示s1在区间[0,i]和s2在区间[0,j]拼接而成的字符串能否匹配s3在区间[0,i+j]的字符串
+     * 状态表示:
+     *           1.s1[i] == s3[i+j]
+     *             dp[i][j] = dp[i-1][j]
+     *           2. s2[j] == s3[i+j]
+     *             dp[i][j] = dp[i][j-1];
+     * 初始化:
+     *        引入空串的概念:
+     *        dp[0][0] ->true
+     *         第一行-> s1为空 s2[i] == s3[i] 只要有不同就为false
+     *         第一列 -> s2 为空 s1[j] == s3[j]只要有不同就为false
+     * 返回值:
+     *          dp[n][m]
+     * 时间复杂度: O(N*M)
+     * 空间复杂度: O(N*M)
+     *
+     * @param s1
+     * @param s2
+     * @param s3
+     * @return
+     */
+    public boolean isInterleave(String s1, String s2, String s3) {
+        int n = s1.length(),m = s2.length();
+        if(n+m != s3.length()) return false;
+        s1 = " " + s1;
+        s2 = " " + s2;
+        s3 = " " + s3;
+        boolean[][] dp = new boolean[n+1][m+1];
+        dp[0][0] = true;
+        char[] s = s1.toCharArray();
+        char[] p = s2.toCharArray();
+        char[] t = s3.toCharArray();
+        for(int i = 1; i <= m;i++) {
+            if(p[i] == t[i]) dp[0][i] = true;
+            else break;
+        }
+        for(int i = 1; i <= n;i++) {
+            if(s[i] == t[i]) dp[i][0] = true;
+            else break;
+        }
+        for(int i =1; i <= n; i++) {
+            for(int j = 1; j <= m;j++) {
+                dp[i][j] = (s[i] == t[i+j] && dp[i-1][j]) || (p[j] == t[i+ j] && dp[i][j-1]);
+            }
+        }
+        return dp[n][m];
+    }
     public static void main(String[] args) {
         PriorityQueue<String> q = new PriorityQueue<>();
     }
