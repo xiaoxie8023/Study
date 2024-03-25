@@ -915,6 +915,79 @@ public class LeetCode {
         }
         return dp[n][m];
     }
+    /**712. 两个字符串的最小ASCII删除和
+     * https://leetcode.cn/problems/minimum-ascii-delete-sum-for-two-strings/description/
+     *  根据题目要求,直接逆向思维,转换为求最长公共子序列
+     * 状态表示:
+     *           dp[i][j] 表示s1在区间[0,i]和s2在区间[0,j]的最长公共子序列
+     * 状态转移方程:
+     *           1.结尾包含s1[i]和s2[j]  dp[i][j] = s1[i] == s2[j] + dp[i-1][j-1];
+     *           2.结尾包含s1[i]和不包含s2[j] dp[i][j] = dp[i][j-1]
+     *           3.结尾不包含s1[i]和包含s2[j] dp[i][j] = dp[i-1][j]
+     *           4.结尾不包含s1[i]和不包含s2[j] dp[i][j] = dp[i-1][j]
+     *           注意: 2和3包含了4因为求的是最大值,所以无所谓,但是如果求的是总和问题就要注意这一点
+     * 返回值:
+     *         sum = s1 + s2 的 ASCII和
+     *         return sum - dp[n][m] * 2;
+     * 时间复杂度:O(N*M)
+     * 空间复杂度:O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/25 22:41
+     * @param s1
+     * @param s2
+     * @return int
+     */
+    public int minimumDeleteSum(String s1, String s2) {
+        int n = s1.length(), m = s2.length();
+        s1 = " " + s1;
+        s2 = " " + s2;
+        int[][] dp = new int[n + 1][m + 1];
+        int sum = 0;
+        for (int i = 1; i <= n; i++) {
+            sum += s1.charAt(i);
+            for (int j = 1; j <= m; j++) {
+                if (i == 1) {
+                    sum += s2.charAt(j);
+                }
+                dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+                if (s1.charAt(i) == s2.charAt(j)) {
+                    dp[i][j] = Math.max(dp[i - 1][j - 1] + s1.charAt(i), dp[i][j]);
+
+                }
+            }
+        }
+        return sum - dp[n][m] * 2;
+    }
+    /** 718. 最长重复子数组
+     * https://leetcode.cn/problems/maximum-length-of-repeated-subarray/description/
+     * 状态表示:
+     *          dp[i][j]表示nums1以i位置结尾的子数组,和nums2以j位置为结尾的子数组中的最长重复子数组
+     * 状态转移方程:
+     *              1. s1[i] != s2[j] dp[i][j] = 0
+     *              2. s1[i] == s2[j] dp[i][j] = dp[i-1][j-1] + 1;
+     * 返回值: Max(dp[i][j]);
+     * 时间复杂度:O(N*M)
+     * 空间复杂度:O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/25 22:54
+     * @param nums1
+     * @param nums2
+     * @return int
+     */
+    public int findLength(int[] nums1, int[] nums2) {
+        int n = nums1.length,m = nums2.length;
+        int[][] dp = new int[n+1][m+1];
+        int max = 0;
+        for(int i = 1; i <= n;i++) {
+            for(int j = 1;j <= m;j++) {
+                if(nums1[i-1] == nums2[j-1]) {
+                    dp[i][j] = dp[i-1][j-1] + 1;
+                    max = Math.max(max,dp[i][j]);
+                }
+            }
+        }
+        return max;
+    }
     public static void main(String[] args) {
         PriorityQueue<String> q = new PriorityQueue<>();
     }
