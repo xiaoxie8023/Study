@@ -988,7 +988,439 @@ public class LeetCode {
         }
         return max;
     }
+    /** 01背包问题
+     * https://www.nowcoder.com/practice/fd55637d3f24484e96dad9e992d3f62e?tpId=230&ru=%2Fexam%2Foj&difficulty=&judgeStatus=&tags=&title=&sourceUrl=&gioEnter=menu
+     *1.
+     * 状态表示:
+     *          dp[i][j]表示从前i个物品挑选,背包体积不超过v能装最多价值的物品
+     * 状态转移方程:
+     *           1.不选i位置: dp[i][j] = dp[i-1][j]
+     *           2.选i位置: dp[i][j] = w[i] + dp[i-1][j-vi] if(j - v >= 0);
+     * 返回值:dp[i][j];
+     * 2.
+     * 状态表示:
+     *          dp[i][j]表示从前i个物品挑选,背包体积刚好为v能装最多价值的物品
+     * 状态转移方程:
+     *           1.不选i位置: dp[i][j] = dp[i-1][j]
+     *           2.选i位置: dp[i][j] = w[i] + dp[i-1][j-vi] if(j - v >= 0 && dp[i-1][j-v[i]]);
+     * 初始化:
+     *         第一行为-1除了0,0
+     * 返回值:dp[i][j];
+     * 时间复杂度: O(N*V)
+     * 空间复杂度: O(N*V)
+     * @author xiaoxie
+     * @date 2024/3/26 14:44
+     * @param args
+     */
+    public static void main1(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        int n = scan.nextInt();
+        int V = scan.nextInt();
+        int[] item = new int[n];
+        int[] worth = new int[n];
+        for (int i = 0; i < n; i++) {
+            int v = scan.nextInt();
+            item[i] = v;
+            int worth1 = scan.nextInt();
+            worth[i] = worth1;
+        }
+        worth1(item,worth, V);
+        worth2(item,worth, V);
+    }
+    private static void worth1(int[] item1,int[] worth, int v) {
+        int n = item1.length;
+        int[][] dp = new int[n + 1][v + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= v; j++) {
+                dp[i][j] = dp[i - 1][j];
+                if (j >= item1[i-1]) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i-1][j - item1[i-1]] + worth[i-1]);
+                }
+            }
+        }
+        System.out.println(dp[n][v]);
+    }
+
+    private static void worth2(int[] item1,int[] worth, int v) {
+        int n = item1.length;
+        int[][] dp = new int[n + 1][v + 1];
+        for(int i = 1;i <= v;i++) {
+            dp[0][i] = -1;
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= v; j++) {
+                dp[i][j] = dp[i - 1][j];
+                if (j >= item1[i - 1]&& dp[i-1][j-item1[i-1]] != -1) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i-1][j - item1[i - 1]] + worth[i - 1]);
+                }
+            }
+        }
+        if(dp[n][v] == -1)  System.out.println(0);
+        else System.out.println(dp[n][v]);
+    }
+    /** 01背包问题
+     * 使用滚动数组来优化空间
+     * 空间复杂度O(V)
+     * 删除[i]
+     * 改变j的遍历顺序
+     * @author xiaoxie
+     * @date 2024/3/26 15:15
+     * @param args
+     */
+    public static void main2(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        int n = scan.nextInt();
+        int V = scan.nextInt();
+        int[] item = new int[n];
+        int[] worths = new int[n];
+        for (int i = 0; i < n; i++) {
+            int v = scan.nextInt();
+            item[i] = v;
+            int worth = scan.nextInt();
+            worths[i] = worth;
+        }
+        worth11(item,worths, V);
+        worth22(item,worths, V);
+    }
+    private static void worth11(int[] item1,int[] worth, int v) {
+        int n = item1.length;
+        int[] dp = new int[v + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int j = v;j >= item1[i-1]; j--) {
+                dp[j] = Math.max(dp[j],dp[j - item1[i-1]] + worth[i-1]);
+
+            }
+        }
+        System.out.println(dp[v]);
+    }
+    private static void worth22(int[] item1,int[] worths, int v) {
+        int n = item1.length;
+        int[] dp = new int[v + 1];
+        for(int i = 1;i <= v;i++) {
+            dp[i] = -1;
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = v;j >= item1[i-1] ; j--) {
+                if (dp[j-item1[i-1]] != -1) {
+                    dp[j] = Math.max(dp[j], dp[j - item1[i - 1]] + worths[i - 1]);
+                }
+            }
+        }
+        if(dp[v] == -1)  System.out.println(0);
+        else System.out.println(dp[v]);
+    }
+    /** 416. 分割等和子集
+     * https://leetcode.cn/problems/partition-equal-subset-sum/description/
+     * 思路:
+     *      因为题目要求是要把数组划分成两个值相等的数组,于是可以把数组的和求出来,只求一个数组,
+     *      就可以问题转换成01背包问题
+     * 优化
+     * 状态表示:
+     *           dp[i][j]表示从前i个下标开始挑选,是否能够使数值刚好等于j;
+     * 状态转移方程:
+     *            1.不挑选i位置  dp[i][j] = dp[i-1][j];
+     *            2.挑选i位置    if(j >= nums[i]) dp[i][j] = dp[i-1][j-nums[i]]
+     *            dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i]]
+     * 初始化:
+     *         第一列全为true
+     * 返回值:dp[i][j];
+     * 时间复杂度: O(N*M)
+     * 空间复杂度: O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/26 16:27
+     * @param nums
+     * @return boolean
+     */
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for(int x : nums) {
+            sum += x;
+        }
+        if(sum % 2 == 1) return false;
+        int n = nums.length,len = sum / 2;
+        boolean[][] dp = new boolean[n+1][len+ 1];
+        for(int i = 0;i <= n;i++) {
+            dp[i][0] = true;
+        }
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1;j <= len;j++) {
+                dp[i][j] = dp[i-1][j];
+                if(j >= nums[i-1]) {
+                    dp[i][j] = dp[i][j] || dp[i-1][j-nums[i-1]];
+                }
+            }
+        }
+        return dp[n][len];
+    }
+    /** 416. 分割等和子集
+     * https://leetcode.cn/problems/partition-equal-subset-sum/description/
+     * 使用滚动数组来优化空间复杂度
+     * 时间复杂度为O(N)
+     * @author xiaoxie
+     * @date 2024/3/26 16:35
+     * @param nums
+     * @return boolean
+     */
+    public boolean canPartition2(int[] nums) {
+        int sum = 0;
+        for(int x : nums) {
+            sum += x;
+        }
+        if(sum % 2 == 1) return false;
+        int n = nums.length,len = sum / 2;
+        boolean[] dp = new boolean[len+ 1];
+        dp[0] = true;
+        for(int i = 1;i <= n;i++) {
+            for(int j = len;j >= nums[i-1];j--) {
+                dp[j] = dp[j] || dp[j-nums[i-1]];
+            }
+        }
+        return dp[len];
+    }
+    /** 494. 目标和
+     * https://leetcode.cn/problems/target-sum/description/
+     *  根据题目加上数学知识
+     *     1.可以根据题,题目数分为 正数 a 负数 b
+     *     2.  (b为绝对值)a - b = target  a + b = sum;   2a = sum + target a = (sum + target) / 2
+     *     转换为01背包问题
+     * 状态表示:(j = (sum + target) / 2)
+     *          dp[i][j]表示从前i个位置开始选,他们的和等于j所有的选法
+     * 状态转移方程:
+     *            1.不选i dp[i][j] += dp[i-1][j]
+     *            2.选i   dp[i][j] = dp[i-1][j-nums[i]];
+     * 初始化:
+     *            dp[0][0] 为 1,注意因为j等于0的情况很多,所以我们这里不初始化,
+     *            又因为, j >= nums[i] 才执行 dp[i][j] = dp[i-1][j-nums[i]];
+     *            所以j不会越界,所以我们应该要从j = 0开始填表
+     * 返回值:
+     *            dp[n][len];
+     * 时间复杂度: O(N*M)
+     * 空间复杂度: O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/26 20:16
+     * @param nums
+     * @param target
+     * @return int
+     */
+    public int findTargetSumWays(int[] nums, int target) {
+        int sum = 0;
+        for(int num : nums) {
+            sum += num;
+        }
+        int n = nums.length,len = (sum + target) / 2;
+        if(len < 0 || (sum + target) % 2 != 0) return 0;
+        int[][] dp = new int[n+1][len+1];
+        dp[0][0] = 1;
+        for(int i = 1;i<=n;i++) {
+            for(int j = 0;j <= len;j++) {
+                dp[i][j] = dp[i-1][j];
+                if(j >= nums[i-1]) {
+                    dp[i][j] += dp[i-1][j-nums[i-1]] ;
+                }
+            }
+        }
+        return dp[n][len];
+    }
+    /** 494. 目标和
+     * 使用滚动数组来优化空间
+     * 空间复杂度:O(N)
+     * @author xiaoxie
+     * @date 2024/3/26 20:20
+     * @param nums
+     * @param target
+     * @return int
+     */
+    public int findTargetSumWays2(int[] nums, int target) {
+        int sum = 0;
+        for(int num : nums) {
+            sum += num;
+        }
+        int n = nums.length,len = (sum + target) / 2;
+        if(len < 0 || (sum + target) % 2 != 0) return 0;
+        int[] dp = new int[len+1];
+        dp[0] = 1;
+        for(int i = 1;i<=n;i++) {
+            for(int j = len;j >= nums[i-1];j--) {
+                dp[j] += dp[j-nums[i-1]] ;
+            }
+        }
+        return dp[len];
+    }
+    /** 1049. 最后一块石头的重量 II
+     * https://leetcode.cn/problems/last-stone-weight-ii/description/
+     *题目分析 [a,b,c] -> [a-b,c]-> [c-a+b] 就想到可以转换为 一个数可以分为全是正数,全是负数
+     *     分为正数 x ,负数 y    x + y = sum     x - y 尽可能最小(根据题目分析)  7 -> [1,6][2,5][3,4]
+     *     就发现越接近7的两个数,相减得到的数就越小.
+     *     转化成: 从数组中挑选一些数使这些数尽可能的接近sum / 2; 01背包问题
+     *     状态表示:
+     *               dp[i][j]表示以i位置为结尾挑选一些数,能够尽可能装满j的最大值
+     *     状态方程:
+     *              1.不选i dp[i][j] = dp[i-1][j];
+     *              2.选i   dp[i][j] = dp[i-1][j-nums[i]] + nums[i];
+     *              这两个中的最大值
+     *     返回值:   sum- 2*dp[i][j];
+     *     时间复杂度: O(N*M)
+     *     空间复杂度: O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/26 21:22
+     * @param stones
+     * @return int
+     */
+    public int lastStoneWeightII(int[] stones) {
+        int n = stones.length,sum = 0;
+        for(int x : stones) {
+            sum += x;
+        }
+        int len = sum / 2;
+        int[][] dp = new int[n+1][len+1];
+        for(int i = 1; i <= n ;i++) {
+            for(int j = 1;j <= len;j++) {
+                dp[i][j] = dp[i-1][j];
+                if(j >= stones[i-1]) {
+                    dp[i][j] = Math.max(dp[i][j],dp[i-1][j-stones[i-1]]+stones[i-1]);
+                }
+            }
+        }
+        return sum-2*dp[n][len];
+    }
+    /** 1049. 最后一块石头的重量 II
+     * 使用滚动数组来优化空间
+     *  空间复杂度:O(N)
+     * @author xiaoxie
+     * @date 2024/3/26 21:26
+     * @param stones
+     * @return int
+     */
+    public int lastStoneWeightII2(int[] stones) {
+        int sum = 0;
+        for(int x : stones) {
+            sum += x;
+        }
+        int len = sum / 2;
+        int[] dp = new int[len+1];
+        for(int i = 1; i <= stones.length ;i++) {
+            for(int j = len;j >= stones[i-1];j--) {
+                dp[j] = Math.max(dp[j],dp[j-stones[i-1]]+stones[i-1]);
+            }
+        }
+        return sum-2*dp[len];
+    }
+    /** DP42 【模板】完全背包
+     * https://www.nowcoder.com/practice/237ae40ea1e84d8980c1d5666d1c53bc?tpId=230&tqId=2032575&ru=%2Fpractice%2Ffd55637d3f24484e96dad9e992d3f62e&qru=%2Fta%2Fdynamic-programming%2Fquestion-ranking&sourceUrl=https%3A%2F%2Fwww.nowcoder.com%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D230
+     * 问题1.
+     * 状态表示:
+     *          dp[i][j]表示从前i个挑选(可重复挑选),尽可能的装满容量为j的背包的最大价值
+     * 状态转移方程:
+     *          1.不选i dp[i][j] = dp[i-1][j];
+     *          2.选一个i dp[i][j] = dp[i-1][j-w[i]] + w[i];
+     *          3.选两个i dp[i][j] = dp[i-1][j-2w[i]] + 2w[i];
+     *          4.选三个i dp[i][j] = dp[i-1][j-3w[i]] + 3w[i];
+     *          5........    面对这种需要多种状态的情况,我们要尽可能使用数学方法或者根据实际情况的方法把它转换为一到两种状态来表示
+     *         dp[i][j] = dp[i-1][j]+ dp[i-1][j-w[i]] + w[i]+ dp[i-1][j-2w[i]] + 2w[i] +
+     *         dp[i-1][j-3w[i]] + 3w[i]+...+dp[i-1][j-kw[i]] + kw[i]
+     *
+     *         dp[i][j-w[i]] = dp[i-1][j-w[i]]+dp[i-1][j-2w[i]]+ w[i] +dp[i-1][j-3w[i]]+
+     *         2w[i]+ dp[i-1][j4w[i]]+ 3w[i] +...+ dp[i-1][j-xw[i]]+x-1w[i]   因为k和x都是无限接近j的存在 -> k = x
+     *
+     *         dp[i][j] = dp[i-1][j] + dp[i][j-w[i]] + w[i];
+     * 初始化:  全为0
+     * 返回值: dp[n][v]
+     * 问题2.
+     * 状态表示:
+     *          dp[i][j]表示从前i个挑选(可重复挑选),刚好的装满容量为j的背包的最大价值
+     * 状态转移方程:
+     *          1.不选i dp[i][j] = dp[i-1][j];
+     *          2.选一个i dp[i][j] = dp[i-1][j-w[i]] + w[i];
+     *          3.选两个i dp[i][j] = dp[i-1][j-2w[i]] + 2w[i];
+     *          4.选三个i dp[i][j] = dp[i-1][j-3w[i]] + 3w[i];
+     *          根据问题1的数学方法
+     *          dp[i][j] = dp[i-1][j] + dp[i][j-w[i]] + w[i];(因为dp[i][j-w[i]]可能出现装不满的情况,所以我们可以定义装不满的情况为-1)
+     * 初始化: 第一列除了[0,0]别的全为-1;
+     * 返回值:dp[n][v] == -1? 0: dp[n][v];
+     * 时间复杂度:O(N*M)
+     * 空间复杂度:O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/26 22:42
+     * @param args
+     */
+    public static void main3(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        int n = scan.nextInt();
+        int V = scan.nextInt();
+        int[] item = new int[n];
+        int[] worth = new int[n];
+        for (int i = 0; i < n; i++) {
+            item[i] = scan.nextInt();
+            worth[i] = scan.nextInt();
+        }
+        worth1(item,worth,V);
+        worth2(item,worth,V);
+
+    }
+    private static void worth111(int[]item, int[]worth, int v) {
+        int n = item.length;
+        int[][] dp = new int[n + 1][v + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= v; j++) {
+                dp[i][j] = dp[i - 1][j];
+                if (j >= item[i - 1]) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i][j - item[i-1]] + worth[i-1]);
+                }
+            }
+        }
+        System.out.println(dp[n][v]);
+    }
+    private static void worth222(int[]item, int[]worth, int v) {
+        int n = item.length;
+        int[][] dp = new int[n + 1][v + 1];
+        for (int i = 1; i <= v; i++) {
+            dp[0][i] = -1;
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= v; j++) {
+                dp[i][j] = dp[i - 1][j];
+                if (j >= item[i - 1] && dp[i][j - item[i-1]] != -1) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i][j - item[i-1]] + worth[i-1]);
+                }
+            }
+        }
+        System.out.println(dp[n][v] == -1? 0 : dp[n][v]);
+    }
+    /** DP42 【模板】完全背包
+     *使用滚动数组来优化空间
+     *空间复杂度:O(N)
+     * @author xiaoxie
+     * @date 2024/3/26 22:51
+     * @param item
+     * @param worth
+     * @param v
+     */
+    private static void worth121(int[]item, int[]worth, int v) {
+        int n = item.length;
+        int[] dp = new int[v + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int j =  item[i - 1];j<= v; j++) {
+                dp[j] = Math.max(dp[j], dp[j - item[i-1]] + worth[i-1]);
+            }
+        }
+        System.out.println(dp[v]);
+    }
+    private static void worth233(int[]item, int[]worth, int v) {
+        int n = item.length;
+        int[] dp = new int[v + 1];
+        for (int i = 1; i <= v; i++) {
+            dp[i] = -0x3f3f3f3f;
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j =  item[i - 1];j<= v; j++) {
+
+                dp[j] = Math.max(dp[j], dp[j - item[i-1]] + worth[i-1]);
+            }
+        }
+        System.out.println(dp[v] < 0? 0 : dp[v]);
+    }
+
     public static void main(String[] args) {
-        PriorityQueue<String> q = new PriorityQueue<>();
+
     }
 }
