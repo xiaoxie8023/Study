@@ -1419,7 +1419,333 @@ public class LeetCode {
         }
         System.out.println(dp[v] < 0? 0 : dp[v]);
     }
-
+    /** 322. 零钱兑换
+     * https://leetcode.cn/problems/coin-change/description/
+     * 这题可以看作是完全背包问题
+     * 状态表示:
+     *          dp[i][j]表示:从前i个硬币中挑选,能够完全凑成总金额j的所花费的最少硬币
+     * 状态转移方程:
+     *           1.不选i dp[i][j] = dp[i-1][j];
+     *           2.选一次i:  dp[i][j] = dp[i-1][j-c[i]] + 1;
+     *           3.选两次i:  dp[i][j] = dp[i-1][j-2c[i]] + 2;
+     *           4.选三次i:  dp[i][j] = dp[i-1][j-3c[i]] + 3;
+     *           dp[i][j] = dp[i-1][j-c[i]] + 1 +  dp[i-1][j-2c[i]] + 2+ dp[i][j] = dp[i-1][j-3c[i]] + 3+..
+     *           dp[i][j] = dp[i][j-c[i]] + 1;
+     * 初始化:
+     *          dp[0][0] = 0;第一列全为0x3f3f3f3f
+     * 放回值 dp[i][j];
+     * 时间复杂度: O(N*M)
+     * 空间复杂度: O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/27 15:39
+     * @param coins
+     * @param a
+     * @return int
+     */
+    public int coinChange(int[] coins, int a) {
+        int n = coins.length;
+        int[][] dp = new int[n+1][a + 1];
+        for(int i = 1;i <= a;i++) {
+            dp[0][i] = 0x3f3f3f3f;
+        }
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1; j <= a;j++) {
+                dp[i][j] = dp[i-1][j];
+                if(j >= coins[i-1]) {
+                    dp[i][j] = Math.min(dp[i][j],dp[i][j-coins[i-1]] + 1);
+                }
+            }
+        }
+        return dp[n][a] == 0x3f3f3f3f ? -1 : dp[n][a];
+    }
+    /** 322. 零钱兑换
+     *使用滚动数组来优化空间
+     *空间复杂度:O(N)
+     * @author xiaoxie
+     * @date 2024/3/27 15:45
+     * @param coins
+     * @param a
+     * @return int
+     */
+    public int coinChange2(int[] coins, int a) {
+        int n = coins.length;
+        int[] dp = new int[a + 1];
+        for(int i = 1;i <= a;i++) {
+            dp[i] = 0x3f3f3f3f;
+        }
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1;j <= a;j++) {
+                if(j >= coins[i-1]) {
+                    dp[j] = Math.min(dp[j],dp[j-coins[i-1]] + 1);
+                }
+            }
+        }
+        return dp[a] == 0x3f3f3f3f ? -1 : dp[a];
+    }
+    /** 518. 零钱兑换 II
+     * https://leetcode.cn/problems/coin-change-ii/description/
+     * 这就是一道纯粹的完全背包问题
+     * 状态表示:
+     *          dp[i][j]表示挑选前i个硬币(无限个),能够完全等于总金额的方法
+     * 状态转移方程:
+     *          1.不选i dp[i][j] = dp[i-1][j];
+     *          2.选i个 dp[i][j] = dp[i][j-coins];
+     * 初始化:  dp[0][0]=1
+     * 返回值: dp[i][j];
+     * 时间复杂度: O(N*M)
+     * 空间复杂度: O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/27 16:19
+     * @param a
+     * @param coins
+     * @return int
+     */
+    public int change(int a, int[] coins) {
+        int n = coins.length;
+        int[][] dp = new int[n+1][a+1];
+        dp[0][0] = 1;
+        for(int i = 1;i <= n;i++) {
+            for(int j = 0; j <= a;j++) {
+                dp[i][j] = dp[i-1][j];
+                if(j >= coins[i-1] && dp[i][j-coins[i-1]] != -1) {
+                    dp[i][j] +=  dp[i][j-coins[i-1]];
+                }
+            }
+        }
+        return dp[n][a];
+    }
+    /** 518. 零钱兑换 II
+     * https://leetcode.cn/problems/coin-change-ii/description/
+     * 使用滚动数组来优化空间
+     * 空间复杂度:O(N)
+     * @author xiaoxie
+     * @date 2024/3/27 16:24
+     * @param amount
+     * @param coins
+     * @return int
+     */
+    public int change2(int amount, int[] coins) {
+        int [] dp=new int [amount+1];
+        dp[0]=1;
+        for (int i = 0; i < coins.length; i++) {
+            for (int j=coins[i]; j <=amount; j++) {
+                dp[j]+=dp[j-coins[i]];
+            }
+        }
+        return dp[amount];
+    }
+    /**279. 完全平方数
+     * https://leetcode.cn/problems/perfect-squares/description/
+     * 实际上就是求完全背包问题
+     * 状态表示:
+     *            dp[i][j]表示从前i个平方数中挑选,刚好等于j的最小方法
+     * 状态转移方程:
+     *              1.不选i的平方: dp[i][j] = dp[i-1][j];
+     *              2.选:         dp[i][j] = dp[i][j-i*i] + 1
+     * 初始化:  第一列为0x3f3f3f3f dp[0][0] = 0;
+     * 返回值: dp[i][j]
+     *
+     * @author xiaoxie 
+     * @date 2024/3/27 22:29
+     * @param n 
+     * @return int 
+     */
+    public int numSquares(int n) {
+        int m = (int)Math.sqrt(n);
+        int[][] dp = new int[m+1][n+1];
+        for(int i = 1;i <= n;i++) {
+            dp[0][i] = 0x3f3f3f3f;
+        }
+        for(int i = 1;i <= m;i++) {
+            for(int j = 1; j <= n;j++) {
+                dp[i][j] = dp[i-1][j];
+                if(j >= i * i) {
+                    dp[i][j] = Math.min(dp[i][j],dp[i][j-i*i] + 1);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+    /** 279. 完全平方数
+     * 使用滚动数组来优化空间
+     * 空间复杂度:O(N)
+     * @author xiaoxie
+     * @date 2024/3/27 22:33
+     * @param n
+     * @return int
+     */
+    public int numSquares2(int n) {
+        int[] dp = new int[n+1];
+        for (int i=1; i<=n; i++) {
+            int minDp = Integer.MAX_VALUE;
+            for (int j=1; j*j<=i; j++) {
+                minDp = Math.min(dp[i - j*j], minDp);
+            }
+            dp[i] = minDp + 1;
+        }
+        return dp[n];
+    }
+    /** 474. 一和零
+     * https://leetcode.cn/problems/ones-and-zeroes/description/
+     * 其实就是01背包问题的变种,从二维的变成三维了而已
+     * 状态表示:
+     *          dp[i][j][k] 表示从i位置开始挑选,能够刚好装满j,以及装满k的最大长度
+     * 状态转移方程:
+     *          1.不选i   dp[i][j][k] = dp[i-1][j][k];
+     *          2.选i     dp[i][j][k] = dp[i-1][j][k];
+     * 返回值: dp[i][j][k];
+     * 时间复杂度:O(N*J*K)
+     * 空间复杂度:O(N*J*K)
+     * @author xiaoxie
+     * @date 2024/3/28 14:32
+     * @param strs
+     * @param m
+     * @param n
+     * @return int
+     */
+    public int findMaxForm(String[] strs, int m, int n) {
+        int x = strs.length;
+        int[][][] dp = new int[x+1][m+1][n+1];
+        for(int i = 1;i <= x;i++) {
+            int[] zerosOnes = getZerosOnes(strs[i - 1]);
+            int zeros = zerosOnes[0], ones = zerosOnes[1];
+            for(int j = 0; j <= m;j++) {
+                for(int k = 0; k <= n;k++) {
+                    dp[i][j][k] = dp[i-1][j][k];
+                    if(j>=zeros && k >= ones) {
+                        dp[i][j][k] = Math.max(dp[i][j][k], dp[i - 1][j - zeros][k - ones] + 1);
+                    }
+                }
+            }
+        }
+        return dp[x][m][n];
+    }
+    public int[] getZerosOnes(String str) {
+        int[] zerosOnes = new int[2];
+        int length = str.length();
+        for (int i = 0; i < length; i++) {
+            zerosOnes[str.charAt(i) - '0']++;
+        }
+        return zerosOnes;
+    }
+    /**  474. 一和零
+     *使用滚动数组来优化空间
+     *空间复杂度:O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/28 14:35
+     * @param strs
+     * @param m
+     * @param n
+     * @return int
+     */
+    public int findMaxForm2(String[] strs, int m, int n) {
+        int x = strs.length;
+        int[][] dp = new int[m+1][n+1];
+        for(int i = 1;i <= x;i++) {
+            int[] zerosOnes = getZerosOnes(strs[i - 1]);
+            int zeros = zerosOnes[0], ones = zerosOnes[1];
+            for(int j = m; j >=zeros;j--) {
+                for(int k = n;k >= ones ;k--) {
+                    dp[j][k] = Math.max(dp[j][k], dp[j - zeros][k - ones] + 1);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+    /** 879. 盈利计划
+     * 其实就是一个二维01背包费用问题,在加上一些修改就可
+     * 状态表示:
+     *          dp[i][j][k]表示从前i个工作挑选,人数不超过j,利润至少为k的全部计划
+     * 状态转移方程:
+     *          1.不选i dp[i][j][k] = dp[i-1][j][k];
+     *          2.选i:  dp[i][j][k] = dp[i-1][j-g[i]][max(0,k-p[i])]
+     * 重点:     因为,利润至少为k,如果k-p[i]就代表就i这个任务就大于k了,后面i-1就不需要考虑k了
+     *          所以为0即可
+     * 初始化:
+     *         dp[0][j][0] 全为1,没有员工,并且没有利润的情况是可以有1种计划
+     * 返回值:  dp[i][j][k]
+     * 时间复杂度: O(N*M*K)
+     * 空间复杂度: O(N*M)
+     * @author xiaoxie
+     * @date 2024/3/28 15:38
+     * @param n
+     * @param m
+     * @param group
+     * @param profit
+     * @return int
+     */
+    public int profitableSchemes(int n, int m, int[] group, int[] profit) {
+        int len = profit.length;
+        int MOD = (int)1e9+7;
+        int[][] dp = new int[n+1][m+1];
+        for(int i = 0;i <= n;i++) {
+            dp[i][0] = 1;
+        }
+        for(int i = 1; i <= len;i++) {
+            for(int j = n;j >=group[i-1];j--) {
+                for(int k = m;k>= 0;k--) {
+                    dp[j][k] += dp[j-group[i-1]][Math.max(0,k-profit[i-1])];
+                    dp[j][k] %= MOD;
+                }
+            }
+        }
+        return dp[n][m];
+    }
+    /** 377. 组合总和 Ⅳ
+     * https://leetcode.cn/problems/combination-sum-iv/description/
+     * 状态表示:
+     *           dp[i]表示凑成i一共有多少种方法
+     * 状态转移方程:
+     *              if(i > nums[i]) dp[i] = dp[i-nums[i];
+     * 初始化:
+     *          dp[0] = 1
+     * 返回值:   dp[i]
+     * 时间复杂度: O(N*N)
+     * 空间复杂度: O(N)
+     * @author xiaoxie
+     * @date 2024/3/28 17:42
+     * @param nums
+     * @param target
+     * @return int
+     */
+    public int combinationSum4(int[] nums, int target) {
+        int[] dp = new int[target + 1];
+        dp[0] = 1;
+        for(int i = 1;i <= target;i++) {
+            for(int num : nums) {
+                if(i >= num) {
+                    dp[i] += dp[i-num];
+                }
+            }
+        }
+        return dp[target];
+    }
+    /** 96. 不同的二叉搜索树
+     *  https://leetcode.cn/problems/unique-binary-search-trees/description/
+     *  状态表示:
+     *         dp[i]表示有i个节点,一共有多少种二叉搜索树
+     * 状态转移方程:
+     *         dp[i] += dp[j-1] * dp[i-j]       假如以i为根节点  左边就一定有j-1个节点 右边就有
+     *         i-j个节点 前提: 1<= j <=i
+     * 初始化:  dp[0] = 1
+     * 返回值:   dp[i]
+     * 时间复杂度: O(N*M)
+     * 空间复杂度: O(N)
+     * @author xiaoxie
+     * @date 2024/3/28 22:29
+     * @param n
+     * @return int
+     */
+    public int numTrees(int n) {
+        int[] dp = new int[n+1];
+        dp[0] = 1;
+        for(int i = 1;i <= n;i++) {
+            for(int j = 1;j<=i;j++) {
+                dp[i] += dp[j-1] * dp[i-j];
+            }
+        }
+        return dp[n];
+    }
     public static void main(String[] args) {
 
     }
