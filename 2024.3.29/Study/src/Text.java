@@ -161,4 +161,30 @@ public class Text {
         pre = root.val;
         return  isValidBST(root.right);
     }
+    /** 230. 二叉搜索树中第K小的元素
+     * https://leetcode.cn/problems/kth-smallest-element-in-a-bst/description/
+     * 全局变量 + 中序遍历 + 剪枝
+     * @author xiaoxie
+     * @date 2024/3/30 0:05
+     * @param null
+     * @return null
+     */
+    int count;
+    int ret;
+    public int kthSmallest(TreeNode root, int k) {
+        count = k;
+        dfs(root);
+        return ret;
+    }
+    public void dfs(TreeNode root) {
+        if(root == null || count ==0) return;
+        dfs(root.left);
+        count--;
+        //剪枝
+        if(count == 0) {
+            ret = root.val;
+            return;
+        }
+        dfs(root.right);
+    }
 }
