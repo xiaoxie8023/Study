@@ -7,6 +7,7 @@ package LeetCode;/**
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**  递归,dfs,回溯,剪枝问题专题
@@ -242,10 +243,277 @@ public class LeetCode {
             path ^= nums[i];
         }
     }
+    /** 47. 全排列 II
+     * https://leetcode.cn/problems/permutations-ii/description/
+     *  这一题和全排序的框架其实是一样的只不过是剪枝不同
+     *     注意: 要先排序
+     *     剪枝:
+     *     1.同一层节点中,不能出现和上一个相同的节点
+     *     2.同一个数,不能重复用两次
+     *     思考:
+     *     两种方法
+     *      1.考虑"合法" 的节点
+     *      (check[i] == false || (i == 0 || nums[i] != nums[i-1] || check[i-1] == true))
+     *      2.考虑不合法的节点
+     *      (check[i] == true || (i != 0 && nums[i] == nums[i-1] && check[i-1] == false))
+     * @author xiaoxie
+     * @date 2024/3/31 0:21
+     * @param null
+     * @return null
+     */
+    List<List<Integer>> ret4;
+    List<Integer> path4;
+    boolean[] check4;
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        ret4 = new ArrayList<>();
+        path4 = new ArrayList<>();
+        check4 = new boolean[nums.length];
+        Arrays.sort(nums);
+        dfs3(nums);
+        return ret4;
+    }
+    public void dfs3(int[] nums) {
+        if(path4.size() == nums.length) {
+            ret4.add(new ArrayList<>(path4));
+            return;
+        }
+        for(int i = 0; i < nums.length;i++) {
+            if(check4[i] == false && (i == 0 || nums[i] != nums[i-1] || check4[i-1] == true)) {
+                path4.add(nums[i]);
+                check4[i] = true;
+                dfs3(nums);
+                //恢复现场
+                path4.remove(path4.size()-1);
+                check4[i] = false;
+            }
+        }
+    }
+    /** 17. 电话号码的字母组合
+     * https://leetcode.cn/problems/letter-combinations-of-a-phone-number/description/
+     * dfs + 全局变量 + 回溯
+     * @author xiaoxie
+     * @date 2024/3/31 19:03
+     * @param null
+     * @return null
+     */
+    String[] strs = {"" ,"" ,"abc" , "def" , "ghi" ,"jkl" ,"mno" ,"pqrs" ,"tuv" ,"wxyz"};
+    List<String> ret5;
+    StringBuilder path5;
+    public List<String> letterCombinations(String digits) {
+        ret = new ArrayList<>();
+        path5 = new StringBuilder();
+        if(digits.length() == 0) return ret;
+        dfs(digits,0);
+        return ret;
+    }
+    public void dfs(String digits,int post) {
+        if(post == digits.length()) {
+            ret5.add(path5.toString());
+            return;
+        }
+        String str = strs[digits.charAt(post)-'0'];
+        for(int i = 0;i < str.length();i++) {
+            path5.append(str.charAt(i));
+            dfs(digits,post + 1);
+            path5.deleteCharAt(path5.length()-1);//恢复现场
+        }
+    }
+    /** 22. 括号生成
+     * https://leetcode.cn/problems/generate-parentheses/description/
+     * 回溯 + 全局变量 + 剪枝
+     * @author xiaoxie
+     * @date 2024/3/31 19:45
+     * @param null
+     * @return null
+     */
+    List<String> ret6;
+    StringBuilder path6;
+    public List<String> generateParenthesis(int n) {
+        ret6 = new ArrayList<>();
+        path6 = new StringBuilder();
+        dfs(0,0,n);
+        return ret;
+    }
+    public void dfs(int open,int close,int post) {
+        if(path6.length() == 2 * post) {
+            ret6.add(path6.toString());
+            return;
+        }
+        //剪枝
+        if(open < post) {
+            path6.append('(');
+            dfs(open + 1,close,post);
+            path6.deleteCharAt(path6.length()-1);
+        }
+        //剪枝
+        if(close < open) {
+            path6.append(')');
+            dfs(open,close + 1,post);
+            path6.deleteCharAt(path6.length()-1);
+        }
+    }
+    /** 77. 组合
+     * https://leetcode.cn/problems/combinations/description/
+     *  n-(k-path.size()) + 1 ->
+     *  搜索起点的上界 + 接下来要选择的元素个数 - 1 = n
+     *  剪枝操作
+     *  这个剪枝要好好总结
+     * @author xiaoxie
+     * @date 2024/3/31 21:55
+     * @param null
+     * @return null
+     */
+    List<List<Integer>> ret7;
+    List<Integer> path7;
+    int n;
+    int k;
+    public List<List<Integer>> combine(int _n, int _k) {
+        ret7 = new ArrayList<>();
+        path7 = new ArrayList<>();
+        n = _n;
+        k = _k;
+        dfs(1);
+        return ret7;
+    }
+    public void dfs(int begin) {
+        if(path7.size()== k) {
+            ret7.add( new ArrayList<>(path7));
+            return;
+        }
+        // n-(k-path.size()) + 1 ->搜索起点的上界 + 接下来要选择的元素个数 - 1 = n
+        //剪枝操作
+        for(int i = begin; i <= n-(k-path7.size()) + 1;i++) {
+            path7.add(i);
+            dfs(i+1);
+            path7.remove(path7.size()-1);
+        }
+    }
+    /** 494. 目标和
+     * https://leetcode.cn/problems/target-sum/description/
+     * 简单的回溯问题,这题的最优解是转换成01背包问题
+     * @author xiaoxie
+     * @date 2024/3/31 22:35
+     * @param null
+     * @return null
+     */
+    int ret8;
+    int aim;
+    public int findTargetSumWays(int[] nums, int target) {
+        aim = target;
+        dfs(nums,0,0);
+        return ret8;
+    }
+    public void dfs(int[] nums,int begin,int path0) {
+        if(begin == nums.length) {
+            if(path == aim) ret8++;
+            return;
+        }
+        //选
+        dfs(nums,begin + 1,path + nums[begin]);
+        //不选
+        dfs(nums,begin + 1,path-nums[begin]);
+    }
+    /** 39. 组合总和
+     * https://leetcode.cn/problems/combination-sum/description/
+     * dfs + 回溯 + 剪枝 + 全局变量
+     * @author xiaoxie
+     * @date 2024/4/1 10:29
+     * @param null
+     * @return null
+     */
+    List<List<Integer>> ret9;
+    List<Integer> path9;
+    int ans;
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        ret9 = new ArrayList<>();
+        path9 = new ArrayList<>();
+        ans = target;
+        dfs12(candidates,0,0);
+        return ret9;
+    }
+    public void dfs12(int[] nums,int post,int sum) {
+        if(sum == ans) {
+            ret9.add(new ArrayList<>(path9));
+            return;
+        }
+        for(int i = post;i < nums.length;i++) {
+            if(sum + nums[i] <= ans) {//剪枝操作
+                path9.add(nums[i]);
+                dfs(nums,i,sum + nums[i]);//因为可以出现重复的数,所有这里要为i
+                path9.remove(path9.size()-1);
+            }
+        }
+    }
+    /** 784. 字母大小写全排列
+     * https://leetcode.cn/problems/letter-case-permutation/description/
+     * dfs + 回溯 + 剪枝 + 全局变量
+     * @author xiaoxie
+     * @date 2024/4/1 16:15
+     * @param null
+     * @return null
+     */
+    List<String> ret10;
+    StringBuilder path10;
+    public List<String> letterCasePermutation(String s) {
+        ret10 = new ArrayList<>();
+        path10 = new StringBuilder();
+        dfs3(s,0);
+        return ret;
+    }
+    public void dfs3(String s,int post) {
+        if(post == s.length()) {
+            ret10.add(path10.toString());
+            return;
+        }
+        //不变大写
+        char tmp = s.charAt(post);
+        path10.append(tmp);
+        dfs(s,post + 1);
+        path10.deleteCharAt(path10.length()-1);
+        if(tmp < '0' || tmp > '9') {
+            tmp = change(tmp);
+            path10.append(tmp);
+            dfs3(s,post + 1);
+            path10.deleteCharAt(path10.length()-1);
+        }
+    }
+    private char change(char ch) {
+        if(ch >= 'a' && ch <= 'z') return ch -= 32;
+        else return ch += 32;
+    }
+    /** 526. 优美的排列
+     *  https://leetcode.cn/problems/beautiful-arrangement/
+     *
+     * @author xiaoxie
+     * @date 2024/4/1 16:36
+     * @param null
+     * @return null
+     */
+    int ret11;
+    boolean[] check1;
+    public int countArrangement(int n) {
+        check1 = new boolean[n+1];
+        dfs(1,n);
+        return ret11;
+    }
+    public void dfs(int p,int n) {
+        if(p == n + 1) {
+            ret11++;
+            return;
+        }
+        for(int i = 1;i <= n; i++) {
+            if(check1[i] == false &&(p % i == 0 || i % p == 0)) {
+                check1[i] = true;
+                dfs(p + 1,n);
+                check1[i] = false;
+            }
+        }
+    }
 
     public static void main(String[] args) {
         int[] nums = {1,2,3};
         LeetCode l = new LeetCode();
         l.permute(nums);
+        System.out.println();
     }
 }
