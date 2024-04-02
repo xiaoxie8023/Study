@@ -509,7 +509,136 @@ public class LeetCode {
             }
         }
     }
+    /** 51. N 皇后
+     * https://leetcode.cn/problems/n-queens/description/
+     * 一行一行的遍历,一定要画图
+     * @author xiaoxie
+     * @date 2024/4/2 11:29
+     * @param null
+     * @return null
+     */
+    List<List<String>> ret12;
+    List<String> path12;
+    boolean[] arrange;
+    boolean[] straight;
+    boolean[] reverse;
+    public List<List<String>> solveNQueens(int n) {
+        ret12 = new ArrayList<>();
+        path12 = new ArrayList<>();
+        arrange = new boolean[n];
+        straight = new boolean[2 * n];
+        reverse = new boolean[2 * n];
+        dfs6(n,0);
+        return ret12;
+    }
+    public void dfs6(int n,int post) {
+        if(post == n) {
+            ret12.add(new ArrayList<>(path12));
+            return;
+        }
+        for(int i = 0;i < n; i++) {
+            if(arrange[i] == false && straight[post-i + n] == false && reverse[post+i] == false) {
+                StringBuilder sb = new StringBuilder();
+                for(int j = 0;j < n;j++) {
+                    if(i == j) {
+                        sb.append('Q');
+                    }
+                    else {
+                        sb.append('.');
+                    }
+                }
+                arrange[i] = true;
+                straight[post-i + n] = true;
+                reverse[post+i] = true;
+                path12.add(sb.toString());
+                dfs6(n,post+1);
+                path12.remove(path12.size()-1);
+                arrange[i] = false;
+                straight[post-i + n] = false;
+                reverse[post+i] = false;
+            }
+        }
+    }
+    /** 36. 有效的数独
+     * https://leetcode.cn/problems/valid-sudoku/description/
+     * 使用哈希的思想
+     * @author xiaoxie
+     * @date 2024/4/2 15:38
+     * @param board
+     * @return boolean
+     */
+    public boolean isValidSudoku(char[][] board) {
+        boolean[][] row = new boolean[9][10];
+        boolean[][] col = new boolean[9][10];
+        boolean[][][] hash = new boolean[3][3][10];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                int num = board[i][j] - '0';
+                if (board[i][j] != '.') {
+                    if (row[i][num] || col[j][num] || hash[i / 3][j / 3][num]) {
+                        return false;
+                    }
+                    row[i][num] = col[j][num] = hash[i / 3][j / 3][num] = true;
+                }
+            }
+        }
+        return true;
+    }
+    /**37. 解数独
+     * https://leetcode.cn/problems/sudoku-solver/
+     * @author xiaoxie
+     * @date 2024/4/2 17:38
+     * @param null
+     * @return null
+     */
+    boolean[][] cow, rol;
+    boolean[][][] hash;
 
+    public void solveSudoku(char[][] board) {
+        cow = new boolean[9][10];
+        rol = new boolean[9][10];
+        hash = new boolean[3][3][10];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] != '.') {
+                    int num = board[i][j] - '0';
+                    cow[i][num] = true;
+                    rol[j][num] = true;
+                    hash[i / 3][j / 3][num] = true;
+                }
+            }
+        }
+        dfs(board, 0, 0);
+    }
+
+    public boolean dfs(char[][] board, int i, int j) {
+        while (board[i][j] != '.') {
+            if (++j == 9) {
+                i++;
+                j = 0;
+            }
+            if (i == 9) {
+                return true;
+            }
+        }
+        for (int num = 1; num <= 9; num++) {
+            if (!cow[i][num] && !rol[j][num] && !hash[i / 3][j / 3][num]) {
+                board[i][j] = (char) ('0' + num);
+                cow[i][num] = true;
+                rol[j][num] = true;
+                hash[i / 3][j / 3][num] = true;
+                if (dfs(board, i, j)) {
+                    return true;
+                } else {
+                    board[i][j] = '.';
+                    cow[i][num] = false;
+                    rol[j][num] = false;
+                    hash[i / 3][j / 3][num] = false;
+                }
+            }
+        }
+        return false;
+    }
     public static void main(String[] args) {
         int[] nums = {1,2,3};
         LeetCode l = new LeetCode();
