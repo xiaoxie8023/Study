@@ -6,7 +6,7 @@ package Thread;/**
  * Time: 12:53
  */
 
-/** * @author xiaoxie
+/** 懒汉模式* @author xiaoxie
  * @date 2024年04月02日 12:53
  */
 class SingletonLazy {
