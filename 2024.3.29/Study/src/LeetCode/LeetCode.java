@@ -1044,6 +1044,225 @@ public class LeetCode {
             }
         }
     }
+    /** 417. 太平洋大西洋水流问题
+     *  https://leetcode.cn/problems/pacific-atlantic-water-flow/description/
+     *  先从太平洋和大西洋的边界来考虑
+     * @author xiaoxie
+     * @date 2024/4/5 16:57
+     * @param null
+     * @return null
+     */
+    List<List<Integer>> ret15;
+    public List<List<Integer>> pacificAtlantic(int[][] heights) {
+        m = heights.length;
+        n = heights[0].length;
+        ret = new ArrayList<>();
+        boolean[][] pac = new boolean[m][n];
+        boolean[][] atl = new boolean[m][n];
+        for (int j = 0; j < n; j++) {
+            dfs(heights, 0, j, pac);
+        }
+        for (int i = 0; i < m; i++) {
+            dfs(heights, i, 0, pac);
+        }
+        for (int j = 0; j < n; j++) {
+            dfs(heights, m - 1, j, atl);
+        }
+        for (int i = 0; i < m; i++) {
+            dfs(heights, i, n - 1, atl);
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (atl[i][j] && pac[i][j]) {
+                    List<Integer> path = new ArrayList<>();
+                    path.add(i);
+                    path.add(j);
+                    ret15.add(path);
+                }
+            }
+        }
+        return ret15;
+    }
+
+    public void dfs(int[][] heights, int i, int j, boolean[][] vis) {
+        vis[i][j] = true;
+        for (int k = 0; k < 4; k++) {
+            int x = i + dx[k], y = j + dy[k];
+            if (x >= 0 && x < m && y >= 0 && y < n && heights[x][y] >= heights[i][j] && !vis[x][y]) {
+                dfs(heights, x, y, vis);
+            }
+        }
+    }
+    /** 529. 扫雷游戏
+     * https://leetcode.cn/problems/minesweeper/description/
+     * 主要还是要把规则弄懂
+     * @author xiaoxie
+     * @date 2024/4/5 18:07
+     * @param null
+     * @return null
+     */
+    int c1;
+    int c2;
+    int[] dx3 = { -1, 0, 1, -1, 1, -1, 0, 1 };
+    int[] dy3 = { 1, 1, 1, 0, 0, -1, -1, -1 };
+
+    public char[][] updateBoard(char[][] board, int[] click) {
+        m = board.length;
+        n = board[0].length;
+        c1 = click[0];
+        c2 = click[1];
+        if (board[c1][c2] == 'M') {
+            board[c1][c2] = 'X';
+            return board;
+        }
+        dfs9(board, c1, c2);
+        return board;
+    }
+
+    public void dfs9(char[][] board, int i, int j) {
+        int count = 0;
+        for (int k = 0; k < 8; k++) {
+            int x = i + dx3[k], y = j + dy3[k];
+            if (x >= 0 && x < m && y >= 0 && y < n && board[x][y] == 'M') {
+                count++;
+            }
+        }
+        if (count == 0) {//周围没有地雷
+            board[i][j] = 'B';
+            for (int k = 0; k < 8; k++) {
+                int x = i + dx[k], y = j + dy[k];
+                if (x >= 0 && x < m && y >= 0 && y < n && board[x][y] == 'E') {
+                    dfs9(board, x, y);
+                }
+            }
+        } else {
+            board[i][j] = (char) ('0' + count);
+            return;
+        }
+    }
+    /** 509. 斐波那契数
+     * https://leetcode.cn/problems/fibonacci-number/description/
+     * 记忆化搜索
+     * O(N)
+     * @author xiaoxie
+     * @date 2024/4/6 13:53
+     * @param null
+     * @return null
+     */
+    int[] memo;//备忘录
+    public int fib(int n) {
+        memo = new int[n+1];
+        Arrays.fill(memo,-1);
+        return dfs18(n);
+    }
+    public int dfs18(int n) {
+        if(memo[n] != -1) {
+            return memo[n];
+        }
+        if(n == 1 || n == 0) {
+            memo[n] = n;
+            return memo[n];
+        }
+        memo[n] = dfs18(n-1) + dfs18(n-2);
+        return memo[n];
+    }
+    /** 509. 斐波那契数
+     * https://leetcode.cn/problems/fibonacci-number/description/
+     * 简单的dp
+     * O(N)
+     * @author xiaoxie
+     * @date 2024/4/6 13:53
+     * @return int
+     */
+    public int fib2(int n) {
+        if(n < 2) return n;
+        int[] dp = new int[n+1];
+        dp[0] = 0;dp[1] = 1;
+        for(int i = 2; i <= n;i++) {
+            dp[i] = dp[i-1] + dp[i-2];
+        }
+        return dp[n];
+    }
+    /**62. 不同路径
+     * https://leetcode.cn/problems/unique-paths/description/
+     * 记忆化搜索
+     * @author xiaoxie
+     * @date 2024/4/6 14:27
+     * @param null
+     * @return null
+     */
+    int[][] memo1;
+    public int uniquePaths(int m, int n) {
+        memo1 = new int[m+1][n+1];
+        return dfs19(m,n);
+    }
+    public int dfs19(int m,int n) {
+        if(memo1[m][n] != 0) {
+            return memo1[m][n];
+        }
+        if(m == 0 || n == 0) return 0;
+        if(m == 1 && n == 1) {
+            memo1[m][n] = 1;
+            return 1;
+        }
+        memo1[m][n] = dfs19(m-1,n) + dfs19(m,n-1);
+        return memo1[m][n];
+    }
+    /** 62. 不同路径
+     * https://leetcode.cn/problems/unique-paths/description/
+     * dp
+     * @author xiaoxie
+     * @date 2024/4/6 14:31
+     * @param m
+     * @param n
+     * @return int
+     */
+    public int uniquePaths1(int m, int n) {
+        int[][] dp = new int[m+1][n+1];
+        dp[0][1] = 1;
+        for(int i = 1;i <= m;i++) {
+            for(int j = 1; j <= n;j++) {
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
+        }
+        return dp[m][n];
+    }
+    /** 329. 矩阵中的最长递增路径
+     * https://leetcode.cn/problems/longest-increasing-path-in-a-matrix/description/
+     * 记忆化搜索
+     * 这题其实第一个想到的应该是拓扑排序->可以去学一下
+     * @author xiaoxie
+     * @date 2024/4/6 19:56
+     * @param null
+     * @return null
+     */
+    int[][] memo3;
+    public int longestIncreasingPath(int[][] matrix) {
+        m = matrix.length;
+        n = matrix[0].length;
+        memo3 = new int[m][n];
+        int ret = 1;
+        for(int i = 0;i < m;i++) {
+            for(int j = 0;j < n;j++) {
+                ret = Math.max(ret,dfs20(matrix,i,j));
+            }
+        }
+        return ret;
+    }
+    public int dfs20(int[][] matrix,int i,int j) {
+        if(memo3[i][j] != 0) {
+            return memo3[i][j];
+        }
+        int ret = 1;
+        for(int k = 0;k < 4;k++) {
+            int x = i  + dx[k],y = j + dy[k];
+            if(x >= 0 && x < m && y >= 0 && y < n && matrix[i][j] < matrix[x][y]) {
+                ret = Math.max(ret,dfs20(matrix,x,y) + 1);
+            }
+        }
+        memo3[i][j] = ret;
+        return memo3[i][j];
+    }
     public static void main(String[] args) {
         int[] nums = {1, 2, 3};
         LeetCode l = new LeetCode();
