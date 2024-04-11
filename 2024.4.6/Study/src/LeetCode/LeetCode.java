@@ -6,12 +6,40 @@ package LeetCode;/**
  * Time: 19:59
  */
 
+import javafx.util.Pair;
+
 import java.util.*;
 
 /** 力扣刷题加油
  * * @author xiaoxie
  * @date 2024年04月06日 19:59
  */
+class Node {
+    public int val;
+    public List<Node> children;
+
+    public Node() {}
+
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, List<Node> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+ class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int val) { this.val = val; }
+  TreeNode(int val, TreeNode left, TreeNode right) {
+      this.val = val;
+   this.left = left;
+         this.right = right;
+   }
+ }
 public class LeetCode {
     /** 283. 移动零
      * https://leetcode.cn/problems/move-zeroes/description/
@@ -1059,6 +1087,267 @@ public class LeetCode {
             time = timeSeries[i] + duration;
         }
         return ret;
+    }
+    /** 429. N 叉树的层序遍历
+     * https://leetcode.cn/problems/n-ary-tree-level-order-traversal/description/
+     * 队列加层序遍历
+     * @author xiaoxie
+     * @date 2024/4/11 10:34
+     * @param root
+     * @return java.util.List<java.util.List<java.lang.Integer>>
+     */
+    public List<List<Integer>> levelOrder(Node root) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if(root == null) return ret;
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
+        while(!q.isEmpty()) {
+            int sz = q.size();
+            List<Integer> tmp = new ArrayList<>();
+            for(int i = 0;i < sz;i++) {
+                Node node = q.poll();
+                tmp.add(node.val);
+                for(Node child : node.children) {
+                    if(child != null) {
+                        q.add(child);
+                    }
+                }
+            }
+            ret.add(tmp);
+        }
+        return ret;
+    }
+    /** 103. 二叉树的锯齿形层序遍历
+     * https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/description/
+     * 使用双端队列 + 层序遍历
+     * @author xiaoxie
+     * @date 2024/4/11 10:54
+     * @param root
+     * @return java.util.List<java.util.List<java.lang.Integer>>
+     */
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> ret = new LinkedList<>();
+        if(root == null) return ret;
+        Queue<TreeNode> q = new ArrayDeque<>();
+        q.offer(root);
+        int count = 0;//规定偶数从左往右,奇数从右往左
+        while(!q.isEmpty()) {
+            int sz = q.size();
+            Deque<Integer> tmp = new LinkedList<>();
+            for(int i = 0;i < sz;i++) {
+                TreeNode cur = q.poll();
+                if(count % 2 == 0) {
+                    tmp.offerFirst(cur.val);
+                }else {
+                    tmp.offerLast(cur.val);
+                }
+                if(cur.right != null) {
+                    q.offer(cur.right);
+                }
+                if(cur.left != null) {
+                    q.offer(cur.left);
+                }
+            }
+            count++;
+            ret.add(new LinkedList<Integer>(tmp));
+        }
+        return ret;
+    }
+    /** 662. 二叉树最大宽度
+     * https://leetcode.cn/problems/maximum-width-of-binary-tree/description/
+     * 利用二叉树存储在数组中,孩子下标和双亲节点的关系为 x -> 2*x,2*x + 1
+     * 利用上文的规则,在加上层序遍历(BFS)
+     * @author xiaoxie
+     * @date 2024/4/11 14:49
+     * @param root
+     * @return int
+     */
+    public int widthOfBinaryTree(TreeNode root) {
+        int ret = 0;
+        List<Pair<TreeNode,Integer>> q = new ArrayList<Pair<TreeNode, Integer>>();
+        q.add(new Pair<TreeNode,Integer> (root , 1));
+        while(!q.isEmpty()) {
+            //求得每一层的最后一个元素减第一个元素
+            Pair<TreeNode,Integer> t1 = q.get(0);
+            Pair<TreeNode,Integer> t2 = q.get(q.size() - 1);
+            ret = Math.max(ret,t2.getValue()-t1.getValue() + 1);
+            List<Pair<TreeNode,Integer>> tmp = new ArrayList<Pair<TreeNode, Integer>>();
+            for(Pair<TreeNode,Integer> t : q) {
+                TreeNode cur = t.getKey();
+                int index = t.getValue();
+                if(cur.left != null) {
+                    tmp.add(new Pair<TreeNode,Integer>(cur.left,index *2));
+                }
+                if(cur.right != null) {
+                    tmp.add(new Pair<TreeNode,Integer>(cur.right,index *2 + 1));
+                }
+            }
+            q = tmp; // 使用数组覆盖来模拟出队列;
+        }
+        return ret;
+    }
+    /** LCR 044. 在每个树行中找最大值
+     * https://leetcode.cn/problems/hPov7L/description/
+     * 简单的BFS
+     * @author xiaoxie
+     * @date 2024/4/11 15:01
+     * @param root
+     * @return java.util.List<java.lang.Integer>
+     */
+    public List<Integer> largestValues(TreeNode root) {
+        List<Integer> ret = new ArrayList<>();
+        if(root == null) return ret;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        while(!q.isEmpty()) {
+            int sz = q.size();
+            int max = Integer.MIN_VALUE;
+            for(int i = 0;i < sz;i++) {
+                TreeNode cur = q.poll();
+                max = Math.max(max,cur.val);
+                if(cur.left != null) {
+                    q.add(cur.left);
+                }
+                if(cur.right != null) {
+                    q.add(cur.right);
+                }
+            }
+            ret.add(max);
+        }
+        return ret;
+    }
+    /**1046. 最后一块石头的重量
+     * https://leetcode.cn/problems/last-stone-weight/description/
+     * 优先级队列
+     * @author xiaoxie
+     * @date 2024/4/11 15:08
+     * @param stones
+     * @return int
+     */
+    public int lastStoneWeight(int[] stones) {
+        PriorityQueue<Integer> heap = new PriorityQueue<>((a,b)->b-a);
+        for(int stone : stones) {
+            heap.offer(stone);
+        }
+        while(heap.size() > 1) {
+            int x = heap.poll();
+            int y = heap.poll();
+            if(x > y) {
+                heap.offer(x-y);
+            }
+        }
+        return heap.isEmpty() ? 0 : heap.poll();
+    }
+    /** 347. 前 K 个高频元素
+     * https://leetcode.cn/problems/top-k-frequent-elements/description/
+     * 这题等五一的时候在写一边,手搓快排加二分,顺便把堆排也给复习一下
+     * @author xiaoxie
+     * @date 2024/4/11 15:37
+     * @param nums
+     * @param k
+     * @return int[]
+     */
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer,Integer> map = new HashMap<>();
+        for(int num : nums) {
+            map.put(num,map.getOrDefault(num,0)+1);
+        }
+        PriorityQueue<int[]> q = new PriorityQueue<int[]>((a,b)->a[0]-b[0]);
+        for(Map.Entry<Integer,Integer> entry : map.entrySet()) {
+            q.offer(new int[]{entry.getValue(),entry.getKey()});
+        }
+        while(q.size() > k) {
+            q.poll();
+        }
+        int[] ret = new int[k];
+        for(int i = 0;i < k;i++) {
+            ret[i] = q.poll()[1];
+        }
+        return ret;
+    }
+    /** 1926. 迷宫中离入口最近的出口
+     * https://leetcode.cn/problems/nearest-exit-from-entrance-in-maze/description/
+     * BFS
+     * @author xiaoxie
+     * @date 2024/4/11 17:08
+     * @param null
+     * @return null
+     */
+    int[] dx = {0,0,-1,1};
+    int[] dy = {1,-1,0,0};
+    public int nearestExit(char[][] maze, int[] e) {
+        int m = maze.length,n = maze[0].length;
+        boolean[][] vis = new boolean [m][n];
+        Queue<int[]> q = new LinkedList<>();
+        int step = 0;
+        q.add(new int[]{e[0],e[1]});
+        vis[e[0]][e[1]] = true;
+        while(!q.isEmpty()) {
+            step++;
+            int sz = q.size();
+            for(int i = 0;i < sz;i++) {
+                int[] tmp = q.poll();
+                int a = tmp[0],b = tmp[1];
+                for(int j = 0;j < 4;j++) {
+                    int x = a + dx[j],y = b+ dy[j];
+                    if(x >= 0 && x < m && y >= 0 && y < n && maze[x][y] == '.'&& !vis[x][y]) {
+                        if(x == 0 || x == m-1 || y == 0 || y == n -1) {
+                            return step;
+                        }
+                        q.add(new int[]{x,y});
+                        vis[x][y] = true;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+    /** 433. 最小基因变化
+     * https://leetcode.cn/problems/minimum-genetic-mutation/description/
+     * BFS
+     * @author xiaoxie
+     * @date 2024/4/11 18:44
+     * @param startGene
+     * @param endGene
+     * @param bank
+     * @return int
+     */
+    public int minMutation(String startGene, String endGene, String[] bank) {
+        Set<String> vis = new HashSet<>();// 记录修改过的基因序列
+        Set<String> hash = new HashSet<>();// 记录Bank的基因序列
+        for (String str : bank) {
+            hash.add(str);
+        }
+        if (startGene.equals(endGene))
+            return 0;
+        if (!hash.contains(endGene))
+            return -1;
+        int step = 0;
+        char[] ch = { 'A', 'C', 'G', 'T' };
+        Queue<String> q = new LinkedList<>();
+        q.add(startGene);
+        while (!q.isEmpty()) {
+            step++;
+            int sz = q.size();
+            while (sz-- > 0) {
+                String s = q.poll();
+                for (int i = 0; i < 8; i++) {
+                    char[] tmp = s.toCharArray();
+                    for (int j = 0; j < 4; j++) {
+                        tmp[i] = ch[j];
+                        String check = new String(tmp);
+                        if (hash.contains(check) && !vis.contains(check)) {
+                            if (check.equals(endGene))
+                                return step;
+                            q.add(check);
+                            vis.add(check);
+                        }
+                    }
+                }
+            }
+
+        }
+        return -1;
     }
 
     public static void main(String[] args) {
