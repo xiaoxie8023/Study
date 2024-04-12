@@ -1349,9 +1349,458 @@ public class LeetCode {
         }
         return -1;
     }
+    /** 127. 单词接龙
+     * https://leetcode.cn/problems/word-ladder/
+     * BFS解决图问题
+     * @author xiaoxie
+     * @date 2024/4/12 10:19
+     * @param beginWord
+     * @param endWord
+     * @param wordList
+     * @return int
+     */
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> vis = new HashSet<>();// 修改后的单词
+        Set<String> hash = new HashSet<>();
+        for (String str : wordList) {
+            hash.add(str);
+        }
+        int n = endWord.length();
+        if (!hash.contains(endWord))
+            return 0;
+        Queue<String> q = new LinkedList<>();
+        q.add(beginWord);
+        vis.add(beginWord);
+        int ret = 1;
+        while (!q.isEmpty()) {
+            ret++;
+            int sz = q.size();
+            while (sz-- > 0) {
+                String tmp = q.poll();
+                for (int i = 0; i < tmp.length(); i++) {
+                    char[] next = tmp.toCharArray();
+                    for (char change = 'a'; change <= 'z'; change++) {
+                        next[i] = change;
+                        String s = new String(next);
+                        if (hash.contains(s) && !vis.contains(s)) {
+                            if (s.equals(endWord))
+                                return ret;
+                            q.add(s);
+                            vis.add(s);
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+    /** 675. 为高尔夫比赛砍树
+     * https://leetcode.cn/problems/cut-off-trees-for-golf-event/description/
+     * BFS
+     * @author xiaoxie
+     * @date 2024/4/12 11:41
+     * @param forest
+     * @return int
+     */
+    public int cutOffTree(List<List<Integer>> forest) {
+        int m = forest.size(),n = forest.get(0).size();
+        List<int[]> trees = new ArrayList<>();//记录下来树的高度
+        for(int i = 0;i < m;i++) {
+            for(int j = 0;j < n;j++) {
+                if(forest.get(i).get(j) > 1) {
+                    trees.add(new int[]{i,j});
+                }
+            }
+        }
+        Collections.sort(trees,(a,b) -> forest.get(a[0]).get(a[1]) - forest.get(b[0]).get(b[1]));
+        //把每个问题分解成若干个迷宫问题
+        int ret = 0;
+        int x = 0,y = 0;//起点
+        for(int[] tree : trees) {
+            int next1 = tree[0];//终点
+            int next2 = tree[1];
+            int ans = bfs(forest,x,y,next1,next2);
+            if(ans == -1) return -1;
+            ret += ans;
+            x = next1;//更新起点
+            y = next2;
+        }
+        return ret;
+    }
 
+    private int bfs(List<List<Integer>> forest,int x,int y,int next1,int next2) {
+        if(x == next1 && y == next2) return 0;
+        Queue<int[]> q = new LinkedList<>();
+        int m = forest.size();
+        int n= forest.get(0).size();
+        boolean[][] vis = new boolean[m][n];
+        q.add(new int[]{x,y});
+        vis[x][y] = true;
+        int ret = 0;
+        while(!q.isEmpty()) {
+            ret++;
+            int sz = q.size();
+            while(sz-- > 0) {
+                int[] tmp = q.poll();
+                int t1 = tmp[0],t2 = tmp[1];
+                for(int i = 0;i < 4;i++) {
+                    int move1 = t1 + dx[i],move2 = t2 + dy[i];
+                    if(move1 >= 0 && move1 < m && move2 >= 0 && move2 < n && !vis[move1][move2]
+                            && forest.get(move1).get(move2)!= 0) {
+                        if(move1 == next1 && move2 == next2) {
+                            return ret;
+                        }
+                        q.add(new int[]{move1,move2});
+                        vis[move1][move2] = true;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+    /** 542. 01 矩阵
+     * https://leetcode.cn/problems/01-matrix/description/
+     *
+     * @author xiaoxie
+     * @date 2024/4/12 15:41
+     * @param mat
+     * @return int[][]
+     */
+    public int[][] updateMatrix(int[][] mat) {
+        int m = mat.length, n = mat[0].length;
+        int[][] dist = new int[m][n];
+        boolean[][] vis = new boolean[m][n];
+        Queue<int[]> q = new LinkedList<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (mat[i][j] == 0) {
+                    q.add(new int[] { i, j });
+                    vis[i][j] = true;
+                }
+            }
+        }
+        while (!q.isEmpty()) {
+            int[] tmp = q.poll();
+            int a = tmp[0], b = tmp[1];
+            for (int i = 0; i < 4; i++) {
+                int x = a + dx[i], y = b + dy[i];
+                if (x >= 0 && x < m && y >= 0 && y < n && !vis[x][y]) {
+                    q.add(new int[] { x, y });
+                    dist[x][y] = dist[a][b] + 1;
+                    vis[x][y] = true;
+                }
+            }
+        }
+        return dist;
+    }
+    /** 1020. 飞地的数量
+     * https://leetcode.cn/problems/number-of-enclaves/description/
+     * 和太平洋和大西洋的题很像都是先找到边缘的陆地和与边缘陆地相连的陆地
+     * BFS
+     * @author xiaoxie
+     * @date 2024/4/12 16:16
+     * @param grid
+     * @return int
+     */
+    public int numEnclaves(int[][] grid) {
+        int m = grid.length,n = grid[0].length;
+        boolean[][] vis = new boolean[m][n];
+        Queue<int[]> q = new LinkedList<>();
+        for(int i = 0;i < m;i++) {
+            if(grid[i][0] == 1) {
+                q.add(new int[]{i,0});
+                vis[i][0] = true;
+            }
+            if(grid[i][n-1] == 1) {
+                q.add(new int[]{i,n-1});
+                vis[i][n-1] = true;
+            }
+        }
+        for(int j = 0;j < n;j++) {
+            if(grid[0][j] == 1) {
+                q.add(new int[]{0,j});
+                vis[0][j] = true;
+            }
+            if(grid[m-1][j] == 1) {
+                q.add(new int[]{m-1,j});
+                vis[m-1][j] = true;
+            }
+        }
+        while(!q.isEmpty()) {
+
+                int[] tmp = q.poll();
+                int a = tmp[0],b = tmp[1];
+                for(int i = 0;i < 4;i++) {
+                    int x = a + dx[i],y = b + dy[i];
+                    if(x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 1 && !vis[x][y]) {
+                        vis[x][y] = true;
+                        q.add(new int[]{x,y});
+                    }
+                }
+        }
+        int ret = 0;
+        for(int i = 1;i < m;i++) {
+            for(int j = 1; j < n;j++) {
+                if(grid[i][j] == 1 && !vis[i][j]) {
+                    ret++;
+                }
+            }
+        }
+        return ret;
+    }
+    /** 1765. 地图中的最高点
+     * https://leetcode.cn/problems/map-of-highest-peak/description/
+     * @author xiaoxie
+     * @date 2024/4/12 16:40
+     * @param isWater
+     * @return int[][]
+     */
+    public int[][] highestPeak(int[][] isWater) {
+        int m = isWater.length,n = isWater[0].length;
+        int[][] dist = new int[m][n];
+        for (int i = 0; i < m;i++){
+            Arrays.fill(dist[i], -1); // -1 表示该格子尚未被访问过
+        }
+        Queue<int[]> q = new LinkedList<>();
+        for(int i = 0;i < m;i++) {
+            for(int j = 0; j < n;j++) {
+                if(isWater[i][j] == 1) {
+                    dist[i][j] = 0;
+                    q.add(new int[]{i,j});
+                }
+            }
+        }
+        while(!q.isEmpty()) {
+            int[] tmp = q.poll();
+            int a = tmp[0],b = tmp[1];
+            for(int i = 0;i < 4;i++) {
+                int x = a + dx[i],y = b + dy[i];
+                if(x >= 0 && x < m && y >= 0 && y < n && dist[x][y] == -1) {
+                    dist[x][y] = dist[a][b] + 1;
+                    q.add(new int[]{x,y});
+                }
+            }
+        }
+        return dist;
+    }
+    /** 1162. 地图分析
+     * https://leetcode.cn/problems/as-far-from-land-as-possible/description/
+     * @author xiaoxie
+     * @date 2024/4/12 17:15
+     * @param grid
+     * @return int
+     */
+    public int maxDistance(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        int[][] vis = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            Arrays.fill(vis[i], -1);
+        }
+        Queue<int[]> q = new LinkedList<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    vis[i][j] = 0;
+                    q.add(new int[] { i, j });
+                }
+            }
+        }
+        int count=q.size();
+        if (count==n*n || count==0)
+            return -1;
+        while (!q.isEmpty()) {
+            int[] tmp = q.poll();
+            int a = tmp[0], b = tmp[1];
+            for (int i = 0; i < 4; i++) {
+                int x = a + dx[i], y = b + dy[i];
+                if (x >= 0 && x < m && y >= 0 && y < n && vis[x][y] == -1) {
+                    vis[x][y] = vis[a][b] + 1;
+                    q.add(new int[] { x, y });
+                }
+            }
+        }
+        int ret = -1;
+        for(int i = 0;i < m;i++) {
+            for(int j = 0;j < n;j++) {
+                if(grid[i][j] == 0) {
+                    ret = Math.max(ret,vis[i][j]);
+                }
+            }
+        }
+        return ret;
+    }
+    /** 207. 课程表
+     * https://leetcode.cn/problems/course-schedule/description/
+     * 拓扑排序
+     * @author xiaoxie
+     * @date 2024/4/12 19:46
+     * @param num
+     * @param p
+     * @return boolean
+     */
+    public boolean canFinish(int num, int[][] p) {
+        //使用Map来充当邻接表的容器
+        int n = p.length;
+        Map<Integer,List<Integer>> edges = new HashMap<>();
+        //使用in数组来统计该点的入度信息
+        int[] in = new int[num];
+        //创建图
+        for(int i = 0;i < n;i++) {
+            int a = p[i][0],b = p[i][1]; // b -> a
+            if(!edges.containsKey(b)) {
+                edges.put(b,new ArrayList<>());
+            }
+            edges.get(b).add(a);
+            in[a]++;
+        }
+        //拓扑排序
+        Queue<Integer> q = new LinkedList<>();
+        //判断一下入度为0的点
+        for(int i = 0;i < num;i++) {
+            if(in[i] == 0) {
+                q.add(i);
+            }
+        }
+        int vis = 0;
+        while(!q.isEmpty()) {
+            vis++;
+            int t = q.poll();
+            for(int edge : edges.getOrDefault(t,new ArrayList<>())) {
+                in[edge]--;
+                if(in[edge] == 0) {
+                    q.add(edge);
+                }
+            }
+        }
+        return vis == num;
+    }
+    /** 210. 课程表 II
+     * https://leetcode.cn/problems/course-schedule-ii/description/
+     * 拓扑排序
+     * @author xiaoxie
+     * @date 2024/4/12 20:04
+     * @param numCourses
+     * @param p
+     * @return int[]
+     */
+    public int[] findOrder(int numCourses, int[][] p) {
+        int[] ret = new int[numCourses];
+        int n = p.length;
+        //准备容器
+        Map<Integer,List<Integer>> edges = new HashMap<>();
+        int[] in = new int[numCourses];
+        //使用邻接表来创建图
+        for(int i = 0;i < n;i++) {
+            int a = p[i][0],b = p[i][1]; //b->a
+            if(!edges.containsKey(b)) {
+                edges.put(b,new ArrayList<>());
+            }
+            edges.get(b).add(a);
+            in[a]++;
+        }
+        Queue<Integer> q = new LinkedList<>();
+        for(int i = 0;i < numCourses;i++) {
+            if(in[i] == 0) {
+                q.add(i);
+            }
+        }
+        int vis = 0;
+        while(!q.isEmpty()) {
+            int tmp = q.poll();
+            ret[vis++] = tmp;
+            for(int a : edges.getOrDefault(tmp,new ArrayList<>())) {
+                in[a]--;
+                if(in[a] == 0) {
+                    q.add(a);
+                }
+            }
+        }
+        if(vis != numCourses) {
+            return new int[0];
+        }
+        return ret;
+    }
+    /** LCR 114. 火星词典
+     * https://leetcode.cn/problems/Jf1JuT/description/
+     * 拓扑排序
+     * 值得多写几遍,太锻炼代码能力了
+     * @author xiaoxie
+     * @date 2024/4/12 22:04
+     * @param null
+     * @return null
+     */
+    Map<Character, Set<Character>> edges = new HashMap<>();// 使用邻接表建图
+    Map<Character, Integer> dist = new HashMap<>();// 记录入度信息
+    boolean check; // 检查是否合法
+
+    public String alienOrder(String[] words) {
+        // 初始化入度表
+        for (String str : words) {
+            for (int i = 0; i < str.length(); i++) {
+                dist.put(str.charAt(i), 0);
+            }
+        }
+        // 建图
+        int n = words.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                add(words[i], words[j]);
+                if (check == true)
+                    return "";
+            }
+        }
+        // 检查入度为0的字符
+        Queue<Character> q = new LinkedList<>();
+        for (char ch : dist.keySet()) {
+            if (dist.get(ch) == 0) {
+                q.add(ch);
+            }
+        }
+        StringBuilder ret = new StringBuilder();
+        while (!q.isEmpty()) {
+            char tmp = q.poll();
+            ret.append(tmp);
+            if (!edges.containsKey(tmp))
+                continue;
+            for (char ch : edges.get(tmp)) {
+                dist.put(ch, dist.get(ch) - 1);
+                if (dist.get(ch) == 0)
+                    q.add(ch);
+            }
+        }
+        // 判断
+        for (char ch : dist.keySet()) {
+            if (dist.get(ch) != 0)
+                return "";
+        }
+        return ret.toString();
+    }
+
+    public void add(String s1, String s2) {
+        int m = s1.length();
+        int n = s2.length();
+        int min = Math.min(m, n);
+        int i = 0;
+        for (; i < min; i++) {
+            char c1 = s1.charAt(i), c2 = s2.charAt(i);
+            if (c1 != c2) {
+                if (!edges.containsKey(c1)) {
+                    edges.put(c1, new HashSet<>());
+                }
+
+                if (!edges.get(c1).contains(c2)) {
+                    edges.get(c1).add(c2);
+                    dist.put(c2, dist.get(c2) + 1);
+                }
+                break;
+            }
+        }
+        if (i == n && i < m) {
+            check = true;
+        }
+    }
     public static void main(String[] args) {
-        System.out.println();
+
 
     }
 }
