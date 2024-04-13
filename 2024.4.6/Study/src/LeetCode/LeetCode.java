@@ -1723,7 +1723,7 @@ public class LeetCode {
     /** LCR 114. 火星词典
      * https://leetcode.cn/problems/Jf1JuT/description/
      * 拓扑排序
-     * 值得多写几遍,太锻炼代码能力了
+     * 值得多
      * @author xiaoxie
      * @date 2024/4/12 22:04
      * @param null
@@ -1800,7 +1800,35 @@ public class LeetCode {
         }
     }
     public static void main(String[] args) {
+        int ret = 0;
+        int year = 1900,tt = 1,rr = 1;
+        int[] month = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+        while(true) {
+            if(year % 400 == 0  || (year % 4 == 0 && year % 100 != 0)) {
+                month[2] = 29;
+            }else {
+                month[2] = 28;
+            }
+            if (year / 1000 + year / 100 % 10 + year / 10 % 10 + year % 10 == tt % 10 +tt / 10 + rr % 10
+                    + rr / 10) { //把年份的每一位拆解，月份和天也拆解，判断是否数位相加之后相等
+               ret++;
+            }
+            rr++;
+            if(rr > month[tt]) {
+                tt++;
+                rr = 1;
+                if(tt >12) {
+                    year++;
+                    tt = 1;
+                }
+            }
 
+            if(year == 9999 && tt == 12 && rr == 31) {
+                break;
+            }
 
+        }
+        System.out.println(ret);
     }
 }
+
