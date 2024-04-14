@@ -1799,36 +1799,105 @@ public class LeetCode {
             check = true;
         }
     }
-    public static void main(String[] args) {
-        int ret = 0;
-        int year = 1900,tt = 1,rr = 1;
-        int[] month = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-        while(true) {
-            if(year % 400 == 0  || (year % 4 == 0 && year % 100 != 0)) {
-                month[2] = 29;
-            }else {
-                month[2] = 28;
-            }
-            if (year / 1000 + year / 100 % 10 + year / 10 % 10 + year % 10 == tt % 10 +tt / 10 + rr % 10
-                    + rr / 10) { //把年份的每一位拆解，月份和天也拆解，判断是否数位相加之后相等
-               ret++;
-            }
-            rr++;
-            if(rr > month[tt]) {
-                tt++;
-                rr = 1;
-                if(tt >12) {
-                    year++;
-                    tt = 1;
-                }
-            }
-
-            if(year == 9999 && tt == 12 && rr == 31) {
-                break;
-            }
-
+    /** 6. Z 字形变换
+     * https://leetcode.cn/problems/zigzag-conversion/description/
+     * 模拟,找规律
+     * @author xiaoxie
+     * @date 2024/4/14 17:43
+     * @param s
+     * @param numRows
+     * @return java.lang.String
+     */
+    public String convert(String s, int numRows) {
+        StringBuilder ret = new StringBuilder();
+        int n = s.length();
+        if(n == 1 || numRows == 1) return s;
+        int d = 2 * numRows - 2;
+        //第一行
+        char[] ch = s.toCharArray();
+        for(int i = 0;i < n;i+= d) {
+            ret.append(ch[i]);
         }
-        System.out.println(ret);
+        //中间行
+        for(int k = 1;k < numRows - 1;k++) {
+            for(int i = k,j = d-k;i < n || j < n;i +=d,j += d) {
+                if(i < n) ret.append(ch[i]);
+                if(j < n) ret.append(ch[j]);
+            }
+        }
+        //最后一行
+        for(int i = numRows - 1;i < n;i+= d) {
+            ret.append(ch[i]);
+        }
+        return ret.toString();
     }
+    /** 38. 外观数列
+     * https://leetcode.cn/problems/count-and-say/description/
+     * 模拟
+     * @author xiaoxie
+     * @date 2024/4/14 18:04
+     * @param n
+     * @return java.lang.String
+     */
+    public String countAndSay(int n) {
+        String ret = "1";
+        for(int i = 1;i < n;i++) {
+            StringBuilder tmp = new StringBuilder();
+            int len = ret.length();
+            for(int left = 0,right = 0;right < len;){
+                while(right < len && ret.charAt(left) == ret.charAt(right)) {
+                    right++;
+                }
+                tmp.append(Integer.toString(right-left));
+                tmp.append(ret.charAt(left));
+                left = right;
+            }
+            ret = tmp.toString();
+        }
+        return ret;
+    }
+    /** 1419. 数青蛙
+     * https://leetcode.cn/problems/minimum-number-of-frogs-croaking/description/
+     * 模拟加哈希表
+     * @author xiaoxie
+     * @date 2024/4/14 20:31
+     * @param croakOfFrogs
+     * @return int
+     */
+    public int minNumberOfFrogs(String croakOfFrogs) {
+        if (croakOfFrogs.length() % 5 != 0) {
+            return -1;
+        }
+        char[] ch = croakOfFrogs.toCharArray();
+        int len = croakOfFrogs.length();
+        Map<Character, Integer> map = new HashMap<Character, Integer>() {{
+            put('c', 0);
+            put('r', 1);
+            put('o', 2);
+            put('a', 3);
+            put('k', 4);
+        }};
+        int[] hash = new int[5];//c r o a k
+        for(int i = 0;i < len;i++) {
+            int index = map.get(ch[i]);
+            if(ch[i] == 'c') {
+                if(hash[4] != 0) hash[4]--;
+                hash[0]++;
+            }else {
+                if(hash[index-1] == 0) {
+                    return -1;
+                }
+                hash[index-1]--;
+                hash[index]++;
+            }
+        }
+        for(int i = 0;i < 4;i++) {
+            if(hash[i] != 0) {
+                return -1;
+            }
+        }
+        return hash[4];
+    }
+
 }
 

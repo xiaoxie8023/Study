@@ -6,6 +6,10 @@ package Thread;/**
  * Time: 22:34
  */
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
+
 /** * @author xiaoxie
  * @date 2024年04月13日 22:34
  */
@@ -34,4 +38,8 @@ class Factory {
     }
 }
 public class Demo8 {
+    public static void main(String[] args) {
+        Map<Integer,String> map = new ConcurrentHashMap<>();
+        map.put(12,"s");
+    }
 }
