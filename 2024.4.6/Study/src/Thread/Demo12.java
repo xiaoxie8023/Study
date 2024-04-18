@@ -43,7 +43,7 @@ class MyThreadPool {
         if (!q.offer(runnable)) {
             // 如果队列已满，并且线程数已经达到最大值，则拒绝新任务
             if (threadList.size() >= maxPoolSize) {
-                throw new RuntimeException("ThreadPool is at maximum capacity, cannot submit new task");
+                throw new RuntimeException("线程池已达到极限,请勿添加任务");
             }
             // 否则创建新线程
             Thread t = addNewThread();

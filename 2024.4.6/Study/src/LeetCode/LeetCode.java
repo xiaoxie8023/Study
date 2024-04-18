@@ -1898,6 +1898,127 @@ public class LeetCode {
         }
         return hash[4];
     }
+    /** 75. 颜色分类
+     * https://leetcode.cn/problems/sort-colors/description/
+     * 三指针的思想
+     * @author xiaoxie
+     * @date 2024/4/15 10:45
+     * @param nums
+     */
+    public void sortColors(int[] nums) {
+        int left = -1,right = nums.length,i = 0;
+        while(i < right) {
+            if(nums[i] == 0) {
+                swap(nums,++left,i++);
+            }else if(nums[i] == 1) {
+                i++;
+            }else {
+                swap(nums,--right,i);
+            }
+        }
+    }
+    private void swap(int[] nums,int i,int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+    /** 215. 数组中的第K个最大元素
+     * https://leetcode.cn/problems/kth-largest-element-in-an-array/description/
+     * 使用快速选择来解决topk问题
+     * @author xiaoxie
+     * @date 2024/4/15 16:00
+     * @param nums
+     * @param k
+     * @return int
+     */
+    public int findKthLargest(int[] nums, int k) {
+        return Qsort(nums,0,nums.length-1,k);
+    }
+    public int Qsort(int[] nums,int left,int right,int k) {
+        if(left == right) return nums[left];
+        int key = nums[new Random().nextInt(right-left + 1)+left];
+        int i = left,l = left-1,r = right + 1;
+        while(i < r) {
+            if(nums[i] < key){
+                swap(nums,++l,i++);
+            }else if(nums[i] == key) {
+                i++;
+            }else {
+                swap(nums,--r,i);
+            }
+        }
+        //[left,l],[l + 1,r-1][r,right]
+        int b = r-l -1,c = right-r + 1;
+        if(c >= k) {
+            return Qsort(nums,r,right,k);
+        }else if(b + c >= k) {
+            return key;
+        }else {
+            return Qsort(nums,left,l,k-b-c);
+        }
+    }
+    /** 使用大根堆来解决问题
+     *
+     * @author xiaoxie
+     * @date 2024/4/15 16:10
+     * @param nums
+     * @param k
+     * @return int
+     */
+    public int findKthLargest2(int[] nums, int k) {
+        PriorityQueue<Integer> heap = new PriorityQueue<>((a,b)-> a-b);
+        for(int num : nums) {
+            if(heap.size() < k) {
+                heap.add(num);
+            }else {
+                if(num > heap.peek()) {
+                    heap.poll();
+                    heap.add(num);
+                }
+            }
+        }
+        return heap.peek();
+    }
+    /** 面试题 17.14. 最小K个数
+     * https://leetcode.cn/problems/smallest-k-lcci/description/
+     * 快速选择算法
+     * @author xiaoxie
+     * @date 2024/4/15 16:41
+     * @param arr
+     * @param k
+     * @return int[]
+     */
+    public int[] smallestK(int[] arr, int k) {
+        qsort(arr,0,arr.length-1,k);
+        int[] ret = new int[k];
+        for(int i = 0;i < k;i++) {
+            ret[i] = arr[i];
+        }
+        return ret;
+    }
+    public void qsort(int[] arr,int left,int right,int k) {
+        if(left >= right) return;
+        int key = arr[new Random().nextInt(right-left+1)+left];
+        int i = left,l = left - 1,r = right + 1;
+        while(i < r) {
+            if(arr[i] < key) {
+                swap(arr,++l,i++);
+            }else if(arr[i] == key) {
+                i++;
+            }else {
+                swap(arr,--r,i);
+            }
+        }
+        // [left,l] [l+1,r-1] [r,right];
+        int a = l-left + 1, b = r-l-1;
+        if(a > k) {
+            qsort(arr,left,l,k);
+        }else if(a + b >= k) {
+            return;
+        }else {
+            qsort(arr,r,right,k-a-b);
+        }
+    }
 
 }
 
