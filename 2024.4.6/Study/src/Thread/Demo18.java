@@ -59,8 +59,8 @@ class MyTimer{
     }
     public void schedule(Runnable runnable, long delay) {
         synchronized(locker) {
-            MyTimerTask myTimerTask = new MyTimerTask(runnable, delay);
-            q.offer(myTimerTask);
+            MyTimerTask Task = new MyTimerTask(runnable, delay);
+            q.offer(Task);
             locker.notify();
         }
     }

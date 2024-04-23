@@ -2019,6 +2019,128 @@ public class LeetCode {
             qsort(arr,r,right,k-a-b);
         }
     }
-    
+    /** 88. 合并两个有序数组
+     * https://leetcode.cn/problems/merge-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150
+     * 双指针
+     * @author xiaoxie
+     * @date 2024/4/21 16:28
+     * @param nums1
+     * @param m
+     * @param nums2
+     * @param n
+     */
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int i = nums1.length-1;
+        while(n > 0) {
+            if(m > 0 && nums1[m-1] >= nums2[n-1]) {
+                nums1[i] = nums1[m-1];
+                m--;
+            }else {
+                nums1[i] = nums2[n-1];
+                n--;
+            }
+            i--;
+        }
+    }
+    /** 27. 移除元素
+     * https://leetcode.cn/problems/remove-element/?envType=study-plan-v2&envId=top-interview-150
+     * 双指针
+     * @author xiaoxie
+     * @date 2024/4/21 16:35
+     * @param nums
+     * @param val
+     * @return int
+     */
+    public int removeElement(int[] nums, int val) {
+        int left = 0,right = nums.length-1;
+        while(left <= right) {
+            if(nums[left] == val) {
+                nums[left] = nums[right--];
+            }else {
+                left++;
+            }
+        }
+        return left;
+    }
+    /** 169. 多数元素
+     * https://leetcode.cn/problems/majority-element/description/?envType=study-plan-v2&envId=top-interview-150
+     * 只有一个为多数元素,使用投票法
+     * @author xiaoxie
+     * @date 2024/4/23 20:52
+     * @param nums
+     * @return int
+     */
+    public int majorityElement(int[] nums) {
+        int d = nums[0];
+        int count = 1;
+        for(int i = 1;i < nums.length;i++) {
+            if(d == nums[i]) {
+                count++;
+            }else if(count == 0) {
+                d = nums[i];
+                count++;
+            }else {
+                count--;
+            }
+        }
+        return d;
+    }
+    /** 169. 多数元素
+     * https://leetcode.cn/problems/majority-element/description/?envType=study-plan-v2&envId=top-interview-150
+     * 摩尔投票法
+     * @author xiaoxie
+     * @date 2024/4/23 20:52
+     * @param nums
+     * @return int
+     */
+        public int majorityElement2(int[] nums) {
+            // x表示当前的数是众数。
+            // votes表示投票数。当前数是众数，则+1；不是，则-1
+            int x = 0, votes = 0;
+            for (int num : nums) {
+                if (votes == 0) {
+                    x = num;
+                }
+                votes += (num == x) ? 1 : -1;
+            }
+            return x;
+        }
+        /** LCR 170. 交易逆序对的总数
+         * https://leetcode.cn/problems/shu-zu-zhong-de-ni-xu-dui-lcof/description/
+         * 就是归并排序的变种
+         * @author xiaoxie
+         * @date 2024/4/23 21:59
+         * @param null
+         * @return null
+         */
+    int[] tmp;
+    public int reversePairs(int[] record) {
+        int n = record.length;
+        tmp = new int[n];
+        return marge(record,0,n-1);
+    }
+    private int marge(int[] record,int left,int right) {
+        if(left >= right) return 0;
+        int mid = (left + right) / 2;
+        int ret = 0;
+        ret += marge(record,left,mid);
+        ret += marge(record,mid + 1,right);
+        //[left, mid] [mid + 1,right]
+        int cur1 = left,cur2 = mid + 1,i = 0;
+        while(cur1 <= mid && cur2 <= right){
+            if(record[cur1] <= record[cur2]) {
+                tmp[i++] = record[cur1++];
+            }else {
+                tmp[i++] = record[cur2++];
+                ret += mid - cur1 + 1;
+            }
+        }
+        while(cur1 <= mid) tmp[i++] = record[cur1++];
+        while(cur2 <= right) tmp[i++] = record[cur2++];
+        for(int j = left;j <= right;j++){
+            record[j] = tmp[j-left];
+        }
+        return ret;
+    }
 }
 
