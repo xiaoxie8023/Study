@@ -2142,5 +2142,65 @@ public class LeetCode {
         }
         return ret;
     }
+    /** 189. 轮转数组
+     * https://leetcode.cn/problems/rotate-array/description/?envType=study-plan-v2&envId=top-interview-150
+     * 使用翻转即可  例:
+     *     原.   1 2 3 4 5 6 7
+     *     1.    7 6 5 4 3 2 1    因为有k个需要翻转
+     *     2.    5 6 7 4 3 2 1
+     *     3.    5 6 7 1 2 3 4
+     *     k 如果大于 nums.length,就从来一圈就好
+     *     k %= nums.length
+     * @author xiaoxie
+     * @date 2024/4/24 22:18
+     * @param nums
+     * @param k
+     */
+    public void rotate(int[] nums, int k) {
+        k %= nums.length;
+        int n = nums.length;
+        reverse(nums,0,n-1);
+        reverse(nums,0,k-1);
+        reverse(nums,k,n-1);
+    }
+    private void reverse(int[] nums,int left,int right) {
+        if(left == right) return;
+        while(left < right) {
+            int tmp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = tmp;
+            left++;
+            right--;
+        }
+    }
+    /** 228. 汇总区间
+     * https://leetcode.cn/problems/summary-ranges/description/?envType=study-plan-v2&envId=top-interview-150
+     * 使用同向双指针,把每个区域分成一段一段的
+     * @author xiaoxie
+     * @date 2024/4/24 22:35
+     * @param nums
+     * @return java.util.List<java.lang.String>
+     */
+    public List<String> summaryRanges(int[] nums) {
+        List<String> ret = new ArrayList<>();
+        int n = nums.length;
+        int left = 0;
+        while(left < n) {
+            int star = left;
+            left++;
+            while(left < n && nums[left] == nums[left-1] + 1) {
+                left++;
+            }
+            int end = left -1;
+            StringBuilder tmp = new StringBuilder(Integer.toString(nums[star]));
+            if(star != end) {
+                tmp.append("->");
+                tmp.append(Integer.toString(nums[end]));
+            }
+            ret.add(tmp.toString());
+        }
+        return ret;
+    }
+
 }
 
