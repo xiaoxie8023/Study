@@ -6,6 +6,8 @@ package School;/**
  * Time: 8:36
  */
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /** * @author xiaoxie
@@ -14,7 +16,6 @@ import java.util.Scanner;
 
 public class Test{
     public static void main(String[] args) {
-        char[] ch = new char[6];
-        System.out.println(ch.length);
+
     }
     }

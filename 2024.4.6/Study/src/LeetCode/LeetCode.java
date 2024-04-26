@@ -2201,6 +2201,47 @@ public class LeetCode {
         }
         return ret;
     }
-
+    /** 122. 买卖股票的最佳时机 II
+     * https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/description/?envType=study-plan-v2&envId=top-interview-150
+     * 贪心
+     * @author xiaoxie
+     * @date 2024/4/26 19:51
+     * @param prices
+     * @return int
+     */
+    public int maxProfit(int[] prices) {
+        int n = prices.length;
+        int ret = 0;
+        for(int i = 1;i < n;i++) {
+            if(prices[i] - prices[i-1] > 0) {
+                ret += prices[i] - prices[i-1];
+            }
+        }
+        return ret;
+    }
+    /** 114. 二叉树展开为链表
+     * https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/description/?envType=study-plan-v2&envId=top-interview-150
+     * 画图
+     * @author xiaoxie
+     * @date 2024/4/26 20:10
+     * @param root
+     */
+    public void flatten(TreeNode root) {
+        TreeNode cur = root;
+        while (cur != null) {
+            if (cur.left != null) {
+                TreeNode next = cur.left;
+                TreeNode pre = next;
+                while (pre.right != null) {
+                    pre = pre.right;
+                }
+                pre.right = cur.right;
+                cur.left = null;
+                cur.right = next;
+            }
+            cur = cur.right;
+        }
+    }
 }
+
 
