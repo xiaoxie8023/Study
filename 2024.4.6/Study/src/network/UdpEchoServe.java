@@ -35,7 +35,7 @@ public class UdpEchoServe {
     }
 
     //这个请求的响应为回显
-    private String process(String request) {
+  public String process(String request) {
         return request;
     }
 

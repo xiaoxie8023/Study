@@ -2242,6 +2242,165 @@ public class LeetCode {
             cur = cur.right;
         }
     }
+    /** 55. 跳跃游戏
+     * https://leetcode.cn/problems/jump-game/description/?envType=study-plan-v2&envId=top-interview-150
+     * 贪心
+     * @author xiaoxie
+     * @date 2024/4/27 12:37
+     * @param nums
+     * @return boolean
+     */
+    public boolean canJump(int[] nums) {
+        int n = nums.length;
+        int end = 0;
+        for(int i = 0;i < n;i++) {
+            if(i <= end) {
+                end = Math.max(end,i+nums[i]);
+            }
+            if(end >= n-1) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**151. 反转字符串中的单词
+     * https://leetcode.cn/problems/reverse-words-in-a-string/description/?envType=study-plan-v2&envId=top-interview-150
+     * 字符串
+     * @author xiaoxie
+     * @date 2024/4/27 13:22
+     * @param s
+     * @return java.lang.String
+     */
+    public String reverseWords(String s) {
+        char[] sArr = s.toCharArray();
+        StringBuilder ans = new StringBuilder();
+        // 倒着遍历
+        for(int i=sArr.length-1;i>=0;i--){
+            // 找到单词的结束位置
+            while(i>=0 && sArr[i]==' '){
+                --i;
+            }
+            int end = i;
+            // 找到单词的起点
+            while(i>=0 && sArr[i]!=' '){
+                --i;
+            }
+            ans.append(" ").append(s.substring(i+1,end+1));
+        }
+        return ans.toString().trim();
+    }
+    /** 315. 计算右侧小于当前元素的个数
+     * https://leetcode.cn/problems/count-of-smaller-numbers-after-self/description/
+     * 归并排序(分治)
+     * @author xiaoxie
+     * @date 2024/4/27 22:29
+     * @param null
+     * @return null
+     */
+    //int[] tmp;之前有调用过
+    int[]cur;
+    int[]index;
+    int[]ret;
+    public List<Integer> countSmaller(int[] nums) {
+        int n = nums.length;
+        tmp = new int[n];
+        cur = new int[n];
+        index = new int[n];
+        ret = new int[n];
+        for(int i = 1;i < n;i++) {
+            index[i] = i;
+        }
+        marge1(nums,0,n-1);
+        List<Integer> list = new ArrayList<Integer>();
+        for (int num : ret) {
+            list.add(num);
+        }
+        return list;
+    }
+    public void marge1(int[] nums,int left,int right) {
+        if(left >= right) {
+            return;
+        }
+        int mid = (left + right) >> 1;
+        marge1(nums,left,mid);
+        marge1(nums,mid + 1,right);
+        int cur1 = left,cur2 = mid + 1;
+        int i = 0;
+        while(cur1 <= mid && cur2 <= right) {
+            if(nums[cur2] >= nums[cur1]) {
+                tmp[i] = nums[cur2];
+                cur[i++] = index[cur2++];
+            }else {
+                ret[index[cur1]] += right - cur2 + 1;
+                tmp[i] = nums[cur1];
+                cur[i++] = index[cur1++];
+            }
+        }
+        while(cur1 <= mid) {
+            tmp[i] = nums[cur1];
+            cur[i++] = index[cur1++];
+        }
+        while(cur2 <= right) {
+            tmp[i] = nums[cur2];
+            cur[i++] = index[cur2++];
+        }
+        for(int j = left;j <= right;j++) {
+            nums[j] = tmp[j-left];
+            index[j] = cur[j-left];
+        }
+    }
+    /** 493. 翻转对
+     * https://leetcode.cn/problems/reverse-pairs/description/
+     * 归并排序(分治)
+     * @author xiaoxie
+     * @date 2024/4/27 23:02
+     * @param null
+     * @return null
+     */
+    int[] tmpNum;
+    public int reversePairs1(int[] nums) {
+        int n = nums.length;
+        tmpNum = new int[n];
+        return marge2(nums,0,n-1);
+
+    }
+    public int marge2(int[] nums,int left,int right) {
+        if(left >= right) return 0;
+        int ret = 0;
+        int mid = (left + right) / 2 ;
+        ret +=marge2(nums,left,mid);
+        ret +=marge2(nums,mid+1,right);
+        int cur1 = left,cur2 = mid + 1,i = left;
+        //先找到
+        while(cur1 <= mid) {
+            while(cur2 <= right && (long)nums[cur2] * 2 >= nums[cur1]) {
+                cur2++;
+            }
+            if(cur2 > right) {
+                break;
+            }
+            ret += (right - cur2 + 1);
+            cur1++;
+        }
+        cur1 = left;cur2 = mid + 1;
+        while(cur1 <= mid && cur2 <= right) {
+            if(nums[cur1] <= nums[cur2]) {
+                tmpNum[i++] = nums[cur2++];
+            }else {
+                tmpNum[i++] = nums[cur1++];
+            }
+        }
+        while(cur1 <= mid) {
+            tmpNum[i++] = nums[cur1++];
+        }
+        while(cur2 <=right) {
+            tmpNum[i++] = nums[cur2++];
+        }
+        for(int j = left;j <= right;j++) {
+            nums[j] = tmpNum[j];
+        }
+        return ret;
+    }
 }
 
 
