@@ -2401,6 +2401,47 @@ public class LeetCode {
         }
         return ret;
     }
+    /** 45. 跳跃游戏 II
+     * https://leetcode.cn/problems/jump-game-ii/description/?envType=study-plan-v2&envId=top-interview-150
+     * 贪心
+     * @author xiaoxie
+     * @date 2024/4/28 20:41
+     * @param nums
+     * @return int
+     */
+    public int jump(int[] nums) {
+        int n = nums.length;
+        int max = 0,end =0,ret = 0;
+        for(int i = 0;i < n-1;i++) {
+            max = Math.max(max,nums[i] + i);
+            if(i == end) {
+                end = max;
+                ret++;
+            }
+        }
+        return ret;
+    }
+    /** 108. 将有序数组转换为二叉搜索树
+     * https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/description/?envType=study-plan-v2&envId=top-interview-150
+     * 分治
+     * @author xiaoxie
+     * @date 2024/4/28 20:49
+     * @param nums
+     * @return LeetCode.TreeNode
+     */
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return margeTree(nums,0,nums.length-1);
+    }
+    public TreeNode margeTree(int[] nums,int left,int right) {
+        if(left > right) {
+            return null;
+        }
+        int mid = (left + right) >> 1;
+        TreeNode cur = new TreeNode(nums[mid]);
+        cur.left = margeTree(nums,left,mid-1);
+        cur.right = margeTree(nums,mid + 1,right);
+        return cur;
+    }
 }
 
 
