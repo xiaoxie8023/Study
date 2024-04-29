@@ -11,13 +11,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
-/** 基于多线程实现
+
+/** 可以再改
+ * 基于多线程实现
  * * @author xiaoxie
  * @date 2024年04月27日 18:12
  */
