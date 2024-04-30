@@ -2442,6 +2442,82 @@ public class LeetCode {
         cur.right = margeTree(nums,mid + 1,right);
         return cur;
     }
+    /** 274. H 指数
+     *https://leetcode.cn/problems/h-index/description/?envType=study-plan-v2&envId=top-interview-150
+     * 使用二分查找
+     * 1.找到这个数据的中间值
+     * 2.遍历数组查看有多少篇数据被引用的值,有多少篇大于这个中间值
+     * 3.如果大于就说明 H 的值,在 [mid,right]之中
+     * 4.如果小于,就说明 H 的值,在[left,mid]之间
+     * @author xiaoxie
+     * @date 2024/4/30 17:21
+     * @param cit
+     * @return int
+     */
+    public int hIndex(int[] cit) {
+        int n = cit.length;
+        int left = 0,right = n,count = 0;
+        while(left < right) {
+            int mid = (left + right + 1) >> 1;
+            count = 0;
+            for(int i = 0;i < n;i++) {
+                if(cit[i] >= mid) {
+                    count++;
+                }
+            }
+            if(count >= mid) {
+                left = mid;
+            }else {
+                right = mid - 1;
+            }
+        }
+        return left;
+    }
+    /** 9. 回文数
+     * https://leetcode.cn/problems/palindrome-number/description/?envType=study-plan-v2&envId=top-interview-150
+     * 这一题可以使用转成字符串的方法,但是这样就引入了额外的空间,所以可以使用反转数字一半来判断
+     * 1.  143341        13231       x
+     * 2.   1              1        14334     1323
+     * 3.   14             13       1433      132
+     * 4.   143            132      143       13
+     * 5.   x == r || x == r / 10
+     * @date 2024/4/30 17:37
+     * @param x
+     * @return boolean
+     */
+    public boolean isPalindrome(int x) {
+        if(x < 0 ||(x > 0 && x % 10 == 0)) {
+            return false;
+        }
+        //
+        int reverseNum = 0;
+        while(x > reverseNum) {
+            reverseNum = reverseNum * 10 + x % 10;
+            x /= 10;
+        }
+        //可能数字为奇数的情况
+        return x == reverseNum || x == reverseNum / 10;
+
+    }
+    /** 112. 路径总和
+     * https://leetcode.cn/problems/path-sum/description/?envType=study-plan-v2&envId=top-interview-150
+     * dfs
+     * @author xiaoxie
+     * @date 2024/4/30 18:00
+     * @param root
+     * @param targetSum
+     * @return boolean
+     */
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        if(root == null) {
+            return false;
+        }
+        if(root.left == null && root.right == null) {
+            return targetSum == root.val;
+        }
+        return hasPathSum(root.left,targetSum - root.val) ||hasPathSum(root.right,targetSum-root.val) ;
+    }
+
 }
 
 
