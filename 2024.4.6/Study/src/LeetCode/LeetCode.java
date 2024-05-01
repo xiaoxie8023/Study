@@ -2517,7 +2517,59 @@ public class LeetCode {
         }
         return hasPathSum(root.left,targetSum - root.val) ||hasPathSum(root.right,targetSum-root.val) ;
     }
+    /** 380. O(1) 时间插入、删除和获取随机元素
+     * https://leetcode.cn/problems/insert-delete-getrandom-o1/description/
+     * 时间复杂度为O(1)-> 哈希表
+     *
+     *  总体思路：用链表最后一个元素覆盖要删除的元素，然后把链表最后一个元素删掉，更新哈希表中的数据
+     *   在哈希表中查找该数据在链表中的下标
+     *   获取链表中最后一个元素
+     *   把最后一个元素移到需要删除的元素处，替换掉
+     *   把替换后的元素和它的新下标一起存入哈希表
+     *   删掉链表最后一个元素
+     *   删掉哈希表中要删除的元素
+     * @author xiaoxie
+     * @date 2024/5/1 21:29
+     * @param null
+     * @return null
+     */
+    class RandomizedSet {
+        Map<Integer,Integer> hash;
+        List<Integer> nums;
+        Random random;
+        public RandomizedSet() {
+            hash = new HashMap<>();
+            nums = new LinkedList<>();
+            random = new Random();
+        }
+        public boolean insert(int val) {
+            if(hash.containsKey(val)) {
+                return false;
+            }
+            int index = nums.size();
+            nums.add(val);
+            hash.put(val,index);
+            return true;
+        }
 
+        public boolean remove(int val) {
+            if(!hash.containsKey(val)) {
+                return false;
+            }
+            int index = hash.get(val);
+            int end = nums.get(nums.size()-1);
+            nums.set(index, end);
+            hash.put(end, index);
+            nums.remove(nums.size() - 1);
+            hash.remove(val);
+            return true;
+        }
+
+        public int getRandom() {
+            int randomIndex = random.nextInt(nums.size());
+            return nums.get(randomIndex);
+        }
+    }
 }
 
 
