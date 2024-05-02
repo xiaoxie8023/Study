@@ -2570,6 +2570,128 @@ public class LeetCode {
             return nums.get(randomIndex);
         }
     }
+    /** 238. 除自身以外数组的乘积
+     * https://leetcode.cn/problems/product-of-array-except-self/description/?envType=study-plan-v2&envId=top-interview-150
+     * 可能遇到 0 的情况所以要使用 前缀积 和 后缀积 来解
+     *    -1  1 0 -3 3   ret[0] = 1  ret[i] = nums[i-1] * ret[i-1]
+     *     1 -1-1 0 0    r = 1
+     *            0 0    r = 3
+     *          9 0 0    r = 9
+     *       0  9 0 0    r = 0
+     *     0 0  9 0 0    r = 0
+     *
+     * @author xiaoxie
+     * @date 2024/5/2 20:59
+     * @param nums
+     * @return int[]
+     */
+    public int[] productExceptSelf1(int[] nums) {
+        int n = nums.length;
+        int[] ret = new int[n];
+        ret[0] = 1;//第一个元素没有前缀积
+        for(int i = 1;i < n;i++) {
+            ret[i] = ret[i-1] * nums[i-1];
+        }
+        int r = 1;//最后一个元素没有后缀积
+        for(int i = n-1;i >= 0;i--) {
+            ret[i] = ret[i] * r;
+            r *= nums[i];
+        }
+        return ret;
+    }
+    /** 117. 填充每个节点的下一个右侧节点指针 II
+     * https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/description/?envType=study-plan-v2&envId=top-interview-150
+     * 简单的bfs
+     * @author xiaoxie
+     * @date 2024/5/2 21:16
+     * @param root
+     * @return LeetCode.Node1
+     */
+    public Node1 connect(Node1 root) {
+        if(root == null) {
+            return null;
+        }
+        Node1 tmp = root;
+        Queue<Node1> q = new LinkedList<>();
+        q.add(tmp);
+        while(!q.isEmpty()) {
+            int sz = q.size();
+            while(sz-- > 0) {
+                Node1 cur = q.poll();
+                if(sz < 1) {
+                    cur.next = null;
+                }else {
+                    cur.next = q.peek();
+                }
+                if(cur.left != null) {
+                    q.add(cur.left);
+                }
+                if(cur.right != null) {
+                    q.add(cur.right);
+                }
+            }
+        }
+        return root;
+    }
+    /** 117. 填充每个节点的下一个右侧节点指针 II
+     * 使用链表的思路
+     * @author xiaoxie
+     * @date 2024/5/2 21:33
+     * @param root
+     * @return LeetCode.Node1
+     */
+    public Node1 connect1(Node1 root) {
+        if (root == null)
+            return root;
+        // cur我们可以把它看做是每一层的链表
+        Node1 cur = root;
+        while (cur != null) {
+            // 遍历当前层的时候，为了方便操作在下一
+            // 层前面添加一个哑结点（注意这里是访问当前层的节点，然后把下一层的节点串起来）
+            Node1 dummy = new Node1(0);
+            // pre表示访问下一层节点的前一个节点
+            Node1 pre = dummy;
+            // 然后开始遍历当前层的链表
+            while (cur != null) {
+                if (cur.left != null) {
+                    // 如果当前节点的左子节点不为空，就让pre节点的next指向他，也就是把它串起来
+                    pre.next = cur.left;
+                    // 然后再更新pre
+                    pre = pre.next;
+                }
+                // 同理参照左子树
+                if (cur.right != null) {
+                    pre.next = cur.right;
+                    pre = pre.next;
+                }
+                // 继续访问这样行的下一个节点
+                cur = cur.next;
+            }
+            // 把下一层串联成一个链表之后，让他赋值给cur，
+            // 后续继续循环，直到cur为空为止
+            cur = dummy.next;
+        }
+        return root;
+    }
 }
+class Node1 {
+    public int val;
+    public Node1 left;
+    public Node1 right;
+    public Node1 next;
+
+    public Node1() {}
+
+    public Node1(int _val) {
+        val = _val;
+    }
+
+    public Node1(int _val, Node1 _left, Node1 _right, Node1 _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
 
 
