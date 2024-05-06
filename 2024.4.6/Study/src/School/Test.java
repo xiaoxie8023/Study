@@ -16,8 +16,6 @@ import java.util.Scanner;
 
 public class Test{
     public static void main(String[] args) {
-        StringBuilder ret = new StringBuilder();
-        ret.append(1);
-        Integer.parseInt(ret.toString());
+        long val = Long.MIN_VALUE;
     }
     }

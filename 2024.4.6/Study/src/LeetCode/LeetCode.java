@@ -2673,6 +2673,189 @@ public class LeetCode {
         }
         return root;
     }
+    /** 58. 最后一个单词的长度
+     * https://leetcode.cn/problems/length-of-last-word/description/?envType=study-plan-v2&envId=top-interview-150'
+     * 正难则反,ez
+     * 这是使用库函数的方法
+     *  String[] split = s.split(" ");
+     *  return split[split.length - 1].length();
+     * @author xiaoxie
+     * @date 2024/5/4 19:40
+     * @param s
+     * @return int
+     */
+    public int lengthOfLastWord(String s) {
+        int index = s.length()-1;
+        char[] ch = s.toCharArray();
+        while(ch[index] == ' ') {
+            index--;
+        }
+        int ret = 0;
+        while(index >= 0 && ch[index] != ' ') {
+            index--;
+            ret++;
+        }
+        return ret;
+    }
+    /** 35. 搜索插入位置
+     * https://leetcode.cn/problems/search-insert-position/description/?envType=study-plan-v2&envId=top-interview-150
+     * 简单的二分
+     * @author xiaoxie
+     * @date 2024/5/4 19:44
+     * @param nums
+     * @param target
+     * @return int
+     */
+    public int searchInsert1(int[] nums, int target) {
+        int left = 0,right = nums.length-1;
+        while(left < right) {
+            int mid = left + ((right-left + 1) >>1);
+            if(nums[mid] <= target) {
+                left = mid;
+            }else {
+                right = mid-1;
+            }
+        }
+        if(nums[left] > target) return 0;
+        return nums[left] == target ? left : left + 1;
+    }
+    /** 57. 插入区间
+     * https://leetcode.cn/problems/insert-interval/description/?envType=study-plan-v2&envId=top-interview-150
+     * 模拟
+     * @author xiaoxie
+     * @date 2024/5/5 19:14
+     * @param intervals
+     * @param newInterval
+     * @return int[][]
+     */
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        int n = intervals.length;
+        List<int[]> tmp = new ArrayList<int[]>();
+        int l = newInterval[0],r = newInterval[1];
+        boolean t = false;//记录newInterval是否被合并到intervals中
+        for(int[] num : intervals) {
+            if(num[0] > r) {
+                if(!t) {
+                    tmp.add(new int[]{l,r});
+                    t = true;
+                }
+                tmp.add(new int[]{num[0],num[1]});
+            }else if(num[1] < l) {
+                tmp.add(new int[]{num[0],num[1]});
+            }else {
+                l = Math.min(l,num[0]);
+                r = Math.max(r,num[1]);
+            }
+        }
+        if(!t) {
+            tmp.add(new int[]{l,r});
+        }
+        int[][] ret = new int[tmp.size()][2];
+        for(int i = 0;i < tmp.size();i++) {
+            ret[i] = tmp.get(i);
+        }
+        return ret;
+    }
+    /** 104. 二叉树的最大深度
+     * https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+     * dfs
+     * @author xiaoxie
+     * @date 2024/5/5 19:17
+     * @param root
+     * @return int
+     */
+    public int maxDepth(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+        int left = maxDepth(root.left);
+        int right = maxDepth(root.right);
+        return Math.max(left,right) + 1;
+    }
+    /** 104. 二叉树的最大深度
+     *  bfs
+     * @author xiaoxie
+     * @date 2024/5/5 19:23
+     * @param root
+     * @return int
+     */
+    public int maxDepth1(TreeNode root) {
+        if(root == null) return 0;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        int ret = 0;
+        while(!q.isEmpty()) {
+            int sz = q.size();
+            while(sz-- > 0) {
+                TreeNode cur = q.poll();
+                if(cur.left != null) {
+                    q.add(cur.left);
+                }
+                if(cur.right != null) {
+                    q.add(cur.right);
+                }
+
+            }
+            ret++;
+        }
+        return ret;
+    }
+    /** 167. 两数之和 II - 输入有序数组
+     * https://leetcode.cn/problems/two-sum-ii-input-array-is-sorted/?envType=study-plan-v2&envId=top-interview-150
+     * 利用题目中的非递减顺序排列
+     * 使用单调性来解
+     * 时间复杂度O(n)
+     * @author xiaoxie
+     * @date 2024/5/6 22:37
+     * @param numbers
+     * @param target
+     * @return int[]
+     */
+    public int[] twoSum(int[] numbers, int target) {
+        int left = 0, right = numbers.length - 1;
+        int sum = 0;
+        while(left < right) {
+            sum = numbers[left] + numbers[right];
+            if(sum == target) {
+                return new int[]{left + 1,right + 1};
+            }else if(sum < target) {
+                left++;
+            }else {
+                right--;
+            }
+        }
+        return new int[]{-1,-1};
+    }
+    /** 128. 最长连续序列
+     * https://leetcode.cn/problems/longest-consecutive-sequence/description/?envType=study-plan-v2&envId=top-interview-150
+     * 这一题还可以使用哈希 + dp 明天去学一下
+     * @author xiaoxie
+     * @date 2024/5/6 22:57
+     * @param nums
+     * @return int
+     */
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> hash = new HashSet<>();
+        for(int num : nums) {
+            hash.add(num);
+        }
+        //判断每个数字是否为开头
+        //如何判断呢,就查看是否有num-1的数字存在,如果有,就说明不是开头,如果没有就说明是,然后算长度
+        //因为是连续的嘛,所以就把数加1查看set中是否存在该数
+        int ret = 0;
+        for(int num : nums) {
+            if(!hash.contains(num -1)) {
+                int count = 1;//
+                int  currentNum = num;
+                while(hash.contains(currentNum+1)) {
+                    currentNum++;
+                    count += 1;
+                }
+                ret = Math.max(ret ,count);
+            }
+        }
+        return ret;
+    }
 }
 class Node1 {
     public int val;
@@ -2692,6 +2875,7 @@ class Node1 {
         right = _right;
         next = _next;
     }
+
 };
 
 
