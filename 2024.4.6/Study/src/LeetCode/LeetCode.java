@@ -2843,7 +2843,7 @@ public class LeetCode {
         //如何判断呢,就查看是否有num-1的数字存在,如果有,就说明不是开头,如果没有就说明是,然后算长度
         //因为是连续的嘛,所以就把数加1查看set中是否存在该数
         int ret = 0;
-        for(int num : nums) {
+        for(int num : hash) {
             if(!hash.contains(num -1)) {
                 int count = 1;//
                 int  currentNum = num;
@@ -2855,6 +2855,70 @@ public class LeetCode {
             }
         }
         return ret;
+    }
+    /** 637. 二叉树的层平均值
+     * https://leetcode.cn/problems/average-of-levels-in-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+     * 这一题其实挺简单的使用BFS,不过DFS有点难想,还得继续加油练
+     * @author xiaoxie
+     * @date 2024/5/7 22:17
+     * @param null
+     * @return null
+     */
+    List<Double> ret10;
+    public List<Double> averageOfLevels(TreeNode root) {
+        ret10 = new ArrayList<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        while(!q.isEmpty()) {
+            int sz = q.size();
+            int count = 0;
+            double sum = 0.0;
+            while(sz-- > 0) {
+                TreeNode cur = q.poll();
+                count++;
+                sum += cur.val;
+                if(cur.left != null) {
+                    q.add(cur.left);
+                }
+                if(cur.right != null) {
+                    q.add(cur.right);
+                }
+            }
+            ret10.add(sum / count);
+        }
+        return ret10;
+    }
+    /**  86. 分隔链表
+     * https://leetcode.cn/problems/partition-list/description/?envType=study-plan-v2&envId=top-interview-150
+     * 哨兵节点
+     * @author xiaoxie
+     * @date 2024/5/7 22:42
+     * @param head
+     * @param x
+     * @return ListNode
+     */
+    public ListNode partition(ListNode head, int x) {
+        if(head == null || head.next == null) {
+            return head;
+        }
+        ListNode small = new ListNode(0);//设置一个小于x 的哨兵节点
+        ListNode min = small;
+        ListNode tmp = new ListNode(0);//设置一个大于等于x 的哨兵节点
+        ListNode max = tmp;
+        ListNode cur = head;
+        while(cur != null) {
+            if(cur.val < x ) {
+                min.next = cur;
+                min = min.next;
+            }else {
+                max.next = cur;
+                max= max.next;
+            }
+            cur = cur.next;
+        }
+        max.next = null;
+        min.next = tmp.next;
+        return small.next;
     }
 }
 class Node1 {
@@ -2877,5 +2941,12 @@ class Node1 {
     }
 
 };
+ class ListNode {
+    int val;
+    ListNode next;
+     ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ }
 
 
