@@ -2920,6 +2920,8 @@ public class LeetCode {
         min.next = tmp.next;
         return small.next;
     }
+    Set<Integer> ret23 = new HashSet<>();
+
 }
 class Node1 {
     public int val;
@@ -2939,7 +2941,66 @@ class Node1 {
         right = _right;
         next = _next;
     }
+    /** 61. 旋转链表
+     * https://leetcode.cn/problems/rotate-list/description/?envType=study-plan-v2&envId=top-interview-150
+     * 特殊技巧;
+     * 先成环在断开
+     * @author xiaoxie
+     * @date 2024/5/8 22:52
+     * @param head
+     * @param k
+     * @return LeetCode.ListNode
+     */
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null || head.next == null || k == 0) {
+            return head;
+        }
+        int n = 1;
+        ListNode cur = head;
+        while (cur.next!= null) {
+            n++;
+            cur = cur.next;
+        }
+        // 3. 找到移动k位后新链表的最后一个节点
+        int add = n - k % n; // add 记录的是新链表的最后一个节点
+        if (add == n) { // 如果k 刚好为n的整数倍数，新链表将于原链表相同
+            return head; // 直接返回原链表即可
+        }
+        // 4. 处理逻辑
+        cur.next = head; // 将当前链表闭合为环
+        while (add-- > 0) { // 将cur指向新链表的最后一个节点位置
+            cur = cur.next;
+        }
+        ListNode ret = cur.next; // 此时 ret为移动k位后新链表的头
+        cur.next = null; // 将环断开
+        return ret; // 返回新链表
 
+    }
+    /** 28. 找出字符串中第一个匹配项的下标
+     * https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/description/?envType=study-plan-v2&envId=top-interview-150
+     * 暴力解法,还需要用到 KMP这题,去看.
+     * @author xiaoxie
+     * @date 2024/5/8 23:01
+     * @param haystack
+     * @param needle
+     * @return int
+     */
+    public int strStr(String haystack, String needle) {
+        int n = haystack.length(), m = needle.length();
+        for (int i = 0; i + m <= n; i++) {
+            boolean flag = true;
+            for (int j = 0; j < m; j++) {
+                if (haystack.charAt(i + j) != needle.charAt(j)) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                return i;
+            }
+        }
+        return -1;
+    }
 };
  class ListNode {
     int val;
