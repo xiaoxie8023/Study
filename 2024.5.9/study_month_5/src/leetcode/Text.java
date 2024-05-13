@@ -458,5 +458,31 @@ public class Text {
         }
         return true;
     }
+    /** 42. 接雨水
+     * https://leetcode.cn/problems/trapping-rain-water/description/?envType=study-plan-v2&envId=top-interview-150
+     * 双指针,非常经典的一道题
+     * 要好好理解,画图
+     * @author xiaoxie
+     * @date 2024/5/13 16:34
+     * @param height
+     * @return int
+     */
+    public int trap(int[] height) {
+        int n = height.length;
+        int pre_max = 0,suf_max = 0; // 算出前后缀最大值;
+        int left = 0,right = n-1,ret = 0;
+        while(left < right) {
+            pre_max = Math.max(pre_max,height[left]);
+            suf_max = Math.max(suf_max,height[right]);
+            if(pre_max < suf_max) {
+                ret += pre_max - height[left];
+                left++;
+            }else {
+                ret += suf_max - height[right];
+                right--;
+            }
+        }
+        return ret;
+    }
 
 }
