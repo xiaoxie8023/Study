@@ -484,5 +484,58 @@ public class Text {
         }
         return ret;
     }
-
+    /** 12. 整数转罗马数字
+     * https://leetcode.cn/problems/integer-to-roman/description/?envType=study-plan-v2&envId=top-interview-150
+     * 两个数组
+     * 贪心
+     * @author xiaoxie
+     * @date 2024/5/14 22:06
+     * @param num
+     * @return java.lang.String
+     */
+    public String intToRoman(int num) {
+        int[] values = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+        String[] rom = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < values.length; i++) {
+            while (num >= values[i]) {
+                sb.append(rom[i]);
+                num -= values[i];
+            }
+        }
+        return sb.toString();
+    }
+    /** 200. 岛屿数量
+     * https://leetcode.cn/problems/number-of-islands/description/?envType=study-plan-v2&envId=top-interview-150
+     * 洪水泛滥
+     * @author xiaoxie
+     * @date 2024/5/14 22:19
+     * @param null
+     * @return null
+     */
+    int[] dx = {0,0,1,-1};
+    int[] dy = {1,-1,0,0};
+    int islands;
+    public int numIslands(char[][] grid) {
+        m = grid.length;
+        n = grid[0].length;
+        for(int i = 0;i < m;i++) {
+            for(int j = 0;j < n;j++) {
+                if(grid[i][j] == '1') {
+                    dfs(grid,i,j);
+                    islands++;
+                }
+            }
+        }
+        return islands;
+    }
+    public void dfs(char[][] grid,int i,int j) {
+        grid[i][j] = '3';
+        for(int k = 0;k < 4;k++) {
+            int x = i + dx[k],y = j + dy[k];
+            if(x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == '1') {
+                dfs(grid,x,y);
+            }
+        }
+    }
 }
