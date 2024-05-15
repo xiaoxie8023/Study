@@ -538,4 +538,34 @@ public class Text {
             }
         }
     }
+    /** 101. 对称二叉树
+     * https://leetcode.cn/problems/symmetric-tree/?envType=study-plan-v2&envId=top-interview-150
+     * 简单的dfs
+     * @author xiaoxie
+     * @date 2024/5/15 22:43
+     * @param root
+     * @return boolean
+     */
+    public boolean isSymmetric(TreeNode root) {
+        if(root == null) return true;
+        return isSameTree2(root.left,root.right);
+    }
+    private boolean isSameTree2(TreeNode r,TreeNode l) {
+        if(r == null && l == null) return true;
+        if(r == null && l!= null || r != null && l == null) return false;
+        if(r.val != l.val) return false;
+        return isSameTree2(r.left,l.right) && isSameTree2(r.right,l.left);
+    }
+    /** 222. 完全二叉树的节点个数
+     * https://leetcode.cn/problems/count-complete-tree-nodes/description/?envType=study-plan-v2&envId=top-interview-150
+     * dfs
+     * @author xiaoxie
+     * @date 2024/5/15 22:45
+     * @param root
+     * @return int
+     */
+    public int countNodes(TreeNode root) {
+        if(root == null) return 0;
+        return countNodes(root.left) + countNodes(root.right) + 1;
+    }
 }
