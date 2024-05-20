@@ -568,4 +568,31 @@ public class Text {
         if(root == null) return 0;
         return countNodes(root.left) + countNodes(root.right) + 1;
     }
+    /** 128. 最长连续序列
+     * https://leetcode.cn/problems/longest-consecutive-sequence/description/?envType=study-plan-v2&envId=top-100-liked
+     * 哈希
+     * @author xiaoxie
+     * @date 2024/5/20 21:57
+     * @param nums
+     * @return int
+     */
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> hash = new HashSet<>();
+        for(int num : nums) {
+            hash.add(num);
+        }
+        int ret = 0;
+        for(int num : hash) {
+            if(!hash.contains(num-1)) {//不存在num -1就说明为开头
+                int currNum = num;
+                int count = 1;
+                while(hash.contains(currNum+ 1)) {
+                    currNum++;
+                    count++;
+                }
+                ret = Math.max(ret,count);
+            }
+        }
+        return ret;
+    }
 }
