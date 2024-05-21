@@ -365,7 +365,7 @@ public class Text {
      * 空间复杂度为O(1)的解法.
      * @author xiaoxie
      * @date 2024/5/12 22:34
-     * @param null
+     * @param
      * @return null
      */
     public int candy1(int[] ratings) {
@@ -595,4 +595,111 @@ public class Text {
         }
         return ret;
     }
+    /** 23. 合并 K 个升序链表
+     * https://leetcode.cn/problems/merge-k-sorted-lists/description/
+     * 使用优先级队列
+     * 时间复杂度为 O(NKlogK)
+     * 空间复杂度:O(K)
+     * @author xiaoxie
+     * @date 2024/5/21 21:22
+     * @param lists
+     * @return ListNode
+     */
+    public ListNode mergeKLists1(ListNode[] lists) {
+        PriorityQueue<ListNode> heap = new PriorityQueue<>((o1, o2) -> {return o1.val-o2.val;});
+        for(ListNode cur : lists) {
+            if(cur != null) {
+                heap.add(cur);
+            }
+        }
+        ListNode dummy = new ListNode(0);
+        ListNode cur = dummy;
+        while(!heap.isEmpty()) {
+            ListNode tmp = heap.poll();
+            cur.next = tmp;
+            cur = cur.next;
+            tmp = tmp.next;
+            if(tmp != null) {
+                heap.add(tmp);
+            }
+        }
+        return dummy.next;
+    }
+    /** 23. 合并 K 个升序链表
+     * https://leetcode.cn/problems/merge-k-sorted-lists/description/
+     * 使用分治 => 归并排序
+     * 时间复杂度为 O(NklogK)
+     * 空间复杂度:O(logk)
+     * @author xiaoxie
+     * @date 2024/5/21 21:22
+     * @param lists
+     * @return ListNode
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        int n = lists.length;
+        return merge(lists,0,n-1);
+    }
+    public ListNode merge(ListNode[] lists,int left,int right) {
+        if(left > right) return null;
+        if(left == right) return lists[left];
+        int mid = (left + right) >>1;
+        ListNode l1 =  merge(lists,left,mid);
+        ListNode l2 = merge(lists,mid+1,right);
+        return mergeTwoList(l1,l2);
+    }
+    public ListNode mergeTwoList(ListNode l1,ListNode l2) {
+        if(l1 == null) return l2;
+        if(l2 == null) return l1;
+        ListNode dummy = new ListNode(0);
+        ListNode cur = dummy;
+        while(l1 != null && l2 != null) {
+            if(l1.val < l2.val) {
+                cur.next = l1;
+                cur = cur.next;
+                l1 = l1.next;
+            }else {
+                cur.next  = l2;
+                cur = cur.next;
+                l2 = l2.next;
+            }
+        }
+        cur.next = (l1 != null ? l1 : l2);
+        return dummy.next;
+    }
+    /** 25. K 个一组翻转链表
+     * https://leetcode.cn/problems/reverse-nodes-in-k-group/description/
+     * 模拟
+     * @author xiaoxie
+     * @date 2024/5/21 22:33
+     * @param head
+     * @param k
+     * @return leetcode.ListNode
+     */
+    public ListNode reverseKGroup(ListNode head, int k) {
+        int n = 0;
+        ListNode tmp = head;
+        while(tmp != null) {
+            n++;
+            tmp = tmp.next;
+        }
+        n /= k;
+        ListNode dummy = new ListNode(0);
+        ListNode cur = dummy;
+        ListNode arr = head;
+        for(int i = 0;i < n;i++) {
+            ListNode prev = arr;
+            for(int j = 0;j < k;j++) {
+                ListNode next = arr.next;
+                arr.next = cur.next;
+                cur.next = arr;
+                arr = next;
+            }
+            cur = prev;
+        }
+        if(arr != null) {
+            cur.next = arr;
+        }
+        return dummy.next;
+    }
+
 }
