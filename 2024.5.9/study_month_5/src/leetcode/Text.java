@@ -7,7 +7,6 @@ package leetcode;/**
  */
 
 import java.util.*;
-
 /** * @author xiaoxie
  * @date 2024年05月09日 17:23
  */
@@ -700,6 +699,36 @@ public class Text {
             cur.next = arr;
         }
         return dummy.next;
+    }
+    /** 20. 有效的括号
+     * https://leetcode.cn/problems/valid-parentheses/description/?envType=study-plan-v2&envId=top-100-liked
+     * 栈
+     * @author xiaoxie
+     * @date 2024/5/23 22:32
+     * @param s
+     * @return boolean
+     */
+    public boolean isValid(String s) {
+        if(s.length() % 2 == 1) {
+            return false;
+        }
+        Stack<Character> stack = new Stack<>();
+        for(int i = 0;i < s.length();i++) {
+            char ch = s.charAt(i);
+            if(ch == '(' || ch == '[' || ch == '{') {
+                stack.push(ch);
+            }else{
+                if(!stack.isEmpty()) {
+                    char ch2 = stack.peek();
+                    if((ch2 == '('&& ch == ')')||( ch2 == '['&& ch == ']') ||( ch2 == '{' && ch == '}')) {
+                        stack.pop();
+                    }else {
+                        return false;
+                    }
+                }else {return false;}
+            }
+        }
+        return stack.isEmpty();
     }
 
 }
