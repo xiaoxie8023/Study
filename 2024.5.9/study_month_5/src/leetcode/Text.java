@@ -730,5 +730,41 @@ public class Text {
         }
         return stack.isEmpty();
     }
+    /** DP36 abb
+     * https://www.nowcoder.com/practice/0a8bbf8b9b5b4280957849ef4f240f07?tpId=230&tqId=38957&ru=/exam/oj&toPageTab=solution
+     * 这题dp+ 哈希表 + 滚动数组,
+     * 特别难想,感觉代码看着简单其实要好好细想一下这题
+     * @author xiaoxie 
+     * @date 2024/5/24 23:46
+     */
+    public void abb() {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        in.nextLine();
+        String str = in.nextLine();
+        char[] ch = str.toCharArray();
+        /**
+         例:     abcbcc
+         ret = f[i](前)0-i-1之前有多少个-x的存在.
+         f[i]有两层含义
+         1.f[i](前) 0-i-1之前有多少个-x的存在.
+         2.f[i](后) 0 -i之前有多少个-x的存在.  
+         f[i](后) = f[i](前) + (i-g[i]) (这个的意思是0-i-1之前有多少个非x的字符);
+         g[i] 有两层含义    
+         1.f[i](前) 0-i-1之前有多少个x的存在.
+         2.f[i](后) 0 -i之前有多少个x的存在.   
+         g[i](后) = g[i](之前) + 1;
+         */
+        long sum = 0;
+        long[] f = new long[26];
+        long[] g = new long[26];
+        for(int i = 0;i < n;i++) {
+            int index = ch[i] -'a';
+            sum += f[index];
+            f[index] = f[index] + (i-g[index]);
+            g[index]++;
+        }
+        System.out.println(sum);
+    }
 
 }
