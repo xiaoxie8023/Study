@@ -294,7 +294,7 @@ public class Text {
         }
     }
     /** 70. 爬楼梯
-     * https://leetcode.cn/problems/climbing-stairs/description/?envType=study-plan-v2&envId=top-interview-150
+     * <a href="https://leetcode.cn/problems/climbing-stairs/description/?envType=study-plan-v2&envId=top-interview-150">...</a>
      * 简单的dp
      * @author xiaoxie
      * @date 2024/5/11 17:06
@@ -765,6 +765,147 @@ public class Text {
             g[index]++;
         }
         System.out.println(sum);
+    }
+    /** 面试题 01.02. 判定是否互为字符重排
+     * https://leetcode.cn/problems/check-permutation-lcci/description/
+     * 简单的哈希表问题.
+     * @author xiaoxie
+     * @date 2024/5/28 14:51
+     * @param s1
+     * @param s2
+     * @return boolean
+     */
+    public boolean CheckPermutation(String s1, String s2) {
+        int n = s1.length();
+        int m = s2.length();
+        if(n!= m) {
+            return false;
+        }
+        int[] hash = new int[26];
+        for(char ch : s1.toCharArray()) {
+            hash[ch-'a']++;
+        }
+        for(char ch : s2.toCharArray()) {
+            if(hash[ch-'a'] <= 0) {
+                return false;
+            }
+            hash[ch-'a']--;
+        }
+        return true;
+    }
+    /** 217. 存在重复元素
+     *  https://leetcode.cn/problems/contains-duplicate/description/
+     *  简单的哈希.
+     * @author xiaoxie
+     * @date 2024/5/28 14:58
+     * @param nums
+     * @return boolean
+     */
+    public boolean containsDuplicate(int[] nums) {
+        Set<Integer> hash = new HashSet<>();
+        for(int num : nums) {
+            if(!hash.add(num)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /** 219. 存在重复元素 II
+     * https://leetcode.cn/problems/contains-duplicate-ii/description/
+     * 使用哈希表
+     * @author xiaoxie
+     * @date 2024/5/28 15:08
+     * @param nums
+     * @param k
+     * @return boolean
+     */
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer,Integer> hash = new HashMap<>();
+        hash.put(nums[0],0);
+        for(int i = 1;i < nums.length;i++) {
+            if(hash.containsKey(nums[i])) {
+                if(Math.abs(i-hash.get(nums[i])) <= k) {
+                    return true;
+                }
+            }
+            hash.put(nums[i],i);
+        }
+        return false;
+    }
+    /** LCR 033. 字母异位词分组
+     * https://leetcode.cn/problems/sfvd7V/description/
+     * 哈希表 + 计数
+     * 时间复杂度: O(kN) K 表示的是一个字符串长度
+     * 空间复杂度: O(NK)
+     * @author xiaoxie
+     * @date 2024/5/28 15:36
+     * @param strs
+     * @return java.util.List<java.util.List<java.lang.String>>
+     */
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String,List<String>> hash = new HashMap<>();
+        for(String str : strs) {
+            int[] count = new int[26];//每个字符串字符出现的次数记录下来
+            int length = str.length();
+            for(int i = 0;i < length;i++) {
+                count[str.charAt(i)-'a']++;
+            }
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0;i < 26;i++) {
+                if(count[i] != 0) {
+                    sb.append((char)(i+'a'));
+                    sb.append(count[i]);//这一步是关键,把字符出现的次数也加到了字符后面
+                }
+            }
+            String key = sb.toString();
+            List<String> list  = hash.getOrDefault(key,new ArrayList<>());
+            list.add(str);
+            hash.put(key,list);
+        }
+        return new ArrayList<List<String>>(hash.values());
+    }
+    /**  LCR 033. 字母异位词分组
+     * 哈希表 + 排序
+     * 时间复杂度: O(NKlogK)
+     * 空间复杂度: O(KN)
+     * @author xiaoxie
+     * @date 2024/5/28 15:39
+     * @param strs
+     * @return java.util.List<java.util.List<java.lang.String>>
+     */
+    public List<List<String>> groupAnagrams2(String[] strs) {
+        // 字母异位词分组
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            char[] chars = str.toCharArray();
+            Arrays.sort(chars);
+            String key = new String(chars);
+            List<String> list = map.getOrDefault(key, new ArrayList<>());
+            list.add(str);
+            map.put(key,list);
+
+        }
+        return new ArrayList<>(map.values());
+    }
+    /** 14. 最长公共前缀
+     * https://leetcode.cn/problems/longest-common-prefix/description/
+     * 这题使用 starsWith讨巧了,所以还是想一个字典树的方法更好一点. 这题有五种方法需要重点掌握.
+     * 时间复杂度(O(N))
+     * @author xiaoxie
+     * @date 2024/5/28 15:50
+     * @param strs
+     * @return java.lang.String
+     */
+    public String longestCommonPrefix1(String[] strs) {
+        if(strs.length == 0) return " ";
+        String ret = strs[0];//公共前缀随机选一个;
+        for(String str : strs) {
+            while(!str.startsWith(ret)) {
+                if(ret.length() == 0) return " ";
+                ret = ret.substring(0,ret.length()-1);
+            }
+        }
+        return ret;
     }
 
 }
