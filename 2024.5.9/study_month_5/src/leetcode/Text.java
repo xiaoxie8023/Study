@@ -6,6 +6,9 @@ package leetcode;/**
  * Time: 17:23
  */
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 /** * @author xiaoxie
  * @date 2024年05月09日 17:23
@@ -13,7 +16,7 @@ import java.util.*;
  class ListNode {
     int val;
      ListNode next;
-    ListNode() {}
+     ListNode() {}
      ListNode(int val) { this.val = val; }
      ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  }
@@ -901,11 +904,168 @@ public class Text {
         String ret = strs[0];//公共前缀随机选一个;
         for(String str : strs) {
             while(!str.startsWith(ret)) {
-                if(ret.length() == 0) return " ";
                 ret = ret.substring(0,ret.length()-1);
             }
         }
         return ret;
     }
+    /** 第二种方法: 纵向对比
+     * Description: longestCommonPrefix2
+     * Param: * @param strs
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 15:49 2024/5/29
+    */
+    public String longestCommonPrefix2(String[] strs) {
+        if(strs.length == 0 || strs[0] == null) return " ";
+        String same = strs[0];
+        int length = strs[0].length();//第一个字符串的长度
+        int count = strs.length;//一共有多少个字符串
+        for(int i = 0;i < length;i++) {
+            char ch = strs[0].charAt(i);
+            for(int j = 1;j <  count;j++) {
+                if(i >= strs[j].length() || ch != strs[j].charAt(i)) {
+                    return same.substring(0,i);
+                }
+            }
+        }
+        return same;
+    }
+    /** 第三方法: 两两对比
+     * Description: longestCommonPrefix3
+     * Param: * @param strs
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 16:02 2024/5/29
+    */
+    public String longestCommonPrefix3(String[] strs) {
+        if(strs.length == 0 || strs[0] == null) return " ";
+        String ret = strs[0];
+        int count = strs.length;//一共有多少个字符串
+        for(int i = 1;i < count;i++) {
+            ret = compare(ret,strs[i]);
+            if(ret.equals(" ")) return " ";
+        }
+        return ret;
+    }
+    public String compare(String s1,String s2) {
+        int length = Math.min(s1.length(),s2.length());
+        for(int i = 0;i < length;i++) {
+            if(s1.charAt(i) != s2.charAt(i)) {
+                return s1.substring(0,i);
+            }
+        }
+        return s1.substring(0,length);
+    }
+    /** 第四方法:二分
+     * 时间复杂度:O(MNlogN)
+     * 其实时间复杂度反而增加了,但是这个思想值得借鉴学习.
+     * Description: longestCommonPrefix4
+     * Param: * @param strs
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 16:25 2024/5/29
+    */
+    public String longestCommonPrefix4(String[] strs) {
+        if(strs.length == 0 || strs[0] == null) return " ";
+        int minlength = 0x3f3f3f3f;
+        for(String str : strs) {
+            minlength = Math.min(minlength,str.length());
+        }
+        int left = 0,right = minlength;
+        while(left < right) {
+            int mid = left + (right-left+1) / 2;
+            if(iscomod(strs,mid)) {
+                left = mid;
+            }else {
+                right = mid - 1;
+            }
+        }
+        return strs[0].substring(0, left);
+    }
+    public boolean iscomod(String[] strs,int length) {
+        String str0 = strs[0].substring(0, length);
+        int count = strs.length;
+        for (int i = 1; i < count; i++) {
+            String str = strs[i];
+            for (int j = 0; j < length; j++) {
+                if (str0.charAt(j) != str.charAt(j)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    /** 第五种方法:分治的思想
+     * 这个还是需要重点掌握的,主要也是因为时间复杂度为O(MN)空间复杂度会高一点O(MlogN).但这个思想还是得重点掌握的
+     * Description: longestCommonPrefix5
+     * Param: * @param strs
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 16:48 2024/5/29
+    */
+    public String longestCommonPrefix5(String[] strs) {
+        if(strs.length == 0 || strs[0] == null) return " ";
+        else return merge(strs,0,strs.length-1);
+    }
+    public String merge(String[] strs,int start,int end) {
+        if(start == end) return strs[start];
+        int mid = start+(end-start) / 2;
+        String left = merge(strs,start,mid);
+        String right = merge(strs,mid+1,end);
+        return lcp(left,right);
+    }
+    public String lcp(String left,String right) {
+        int minLegth = Math.min(left.length(),right.length());
+        for(int i = 0;i < minLegth;i++) {
+            if(left.charAt(i) != right.charAt(i)) {
+                return left.substring(0,i);
+            }
+        }
+        return left.substring(0,minLegth);
+    }
+    /** 题目: DP40 小红取数
+     * 链接: <a href="https://www.nowcoder.com/practice/6a7b2b6c9e3a4f56b1db9f8ca08d889b?tpId=230&tqId=38958&ru=/exam/oj&toPageTab=solution">...</a>
+     *  a % k = x
+     *  b % k = y   =>  (a+b) % k = 0  <=> (x + y) % k = 0
+     * 状态表示:    dp[i][j]:表示前i个数中,总和%k等于j时,最大和为多少.
+     * 状态转移方程: 不选 dp[i][j] = dp[i-1][j];
+     *              选: dp[i][j] = dp[i-1][((j-a[i]) % k + k)%k]+arr[i];
+     *                                    (t + a[i]) % k = j;
+     *                                    t % k = j - a[i] % k ;
+     * 返回值:       dp[n][0];
+     * 总结来说这题还是很有难道,不光要想到这个01背包问题,还需要考虑到同余定理,这个还是个人感觉很难.
+     * @Description: Count
+     * @Param: * @param
+     * @return: void
+     * @Author: xiaoxie
+     * @Date: 15:31 2024/5/29
+     */
+    public void Count() throws IOException {
+            BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+            String[] str = bf.readLine().split(" ");
+            int n = Integer.parseInt(str[0]);
+            int k = Integer.parseInt(str[1]);
+            long[] arr = new long[n+1];
+            String[] strs = bf.readLine().split(" ");
+            for(int i = 1;i <= n;i++) {
+                arr[i] = Long.parseLong(strs[i-1]);
+            }
+            long[][] dp = new long[n+1][k];
+            for(int i = 0;i < k;i++) {
+                dp[0][i] = Long.MIN_VALUE;
+            }
+            dp[0][0] = 0;
+            for(int i = 1;i<= n;i++) {
+                for(int j = 0;j < k;j++) {
+                    dp[i][j] = (Math.max(dp[i-1][j],dp[i-1][(int)((j-arr[i])%k + k) % k] + arr[i]));
+                }
+            }
+            if(dp[n][0]<=0)//初始化为最小值是负数
+                System.out.println(-1);
+            else
+                System.out.println(dp[n][0]);
+        }
+
 
 }
