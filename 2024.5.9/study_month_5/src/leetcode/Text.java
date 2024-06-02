@@ -1066,5 +1066,51 @@ public class Text {
             else
                 System.out.println(dp[n][0]);
         }
-
+        /** 575. 分糖果
+         * <a href="https://leetcode.cn/problems/distribute-candies/description/">...</a>
+         * 简单的哈希表
+         * Description: distributeCandies
+         * Param: * @param candyType
+         * return: int
+         * Author: xiaoxie
+         * Date: 22:48 2024/6/2
+         */
+    public int distributeCandies(int[] candyType) {
+        Set<Integer> hash = new HashSet<>();
+        for(int num : candyType) hash.add(num);
+        return Math.min(hash.size(),candyType.length/2);
+    }
+    /** 1578. 使绳子变成彩色的最短时间
+     * <a href="https://leetcode.cn/problems/minimum-time-to-make-rope-colorful/description/">...</a>
+     * 贪心
+     * 精妙的地方是两个while循环只有1个i++ 第一个while遍历整个数组 第二个while
+     * 对字母和现在的字母相同的进行操作。charAt(i)是不断变化的
+     * 第二个while可以这么理解：
+     * 所有数字都可以进行一次 ，接着指向下一个数字，
+     * 如果相同 返回所有相同数字的总和 然后将总和中最大的数字去掉 留下最小的几个
+     * 注意在while里每一次都要将maxValue 清空 return的是有重复字母中除了最大的几个字母的总和
+     * Description: minCost
+     * Param: * @param color
+     * @param neededTime
+     * return: int
+     * Author: xiaoxie
+     * Date: 23:06 2024/6/2
+     */
+    public int minCost(String color, int[] neededTime) {
+        int n = color.length(),i = 0;
+        char[] colors = color.toCharArray();
+        int ret = 0;
+        while(i < n) {
+            char ch = colors[i];
+            int maxValue = 0;
+            int sum = 0;
+            while (i < n && colors[i] == ch) {
+                maxValue = Math.max(maxValue, neededTime[i]);
+                sum += neededTime[i];
+                i++;
+            }
+            ret += sum - maxValue;
+        }
+        return ret;
+    }
 }
