@@ -1113,4 +1113,149 @@ public class Text {
         }
         return ret;
     }
+    /** 1103. 分糖果 II
+     * <a href="https://leetcode.cn/problems/distribute-candies-to-people/description/">...</a>
+     *很简单的暴力.还可以使用公式求解.更精妙
+     * Description: distributeCandies
+     * Param: * @param candies
+     * @param n
+     * return: int[]
+     * Author: xiaoxie
+     * Date: 10:31 2024/6/3
+     */
+    public int[] distributeCandies(int candies, int n) {
+        int[] ret = new int[n];
+        int i = 0;
+        while(candies > 0) {
+            ret[i % n] += Math.min(candies,i+1);
+            candies -=  Math.min(candies,i+1);
+            i++;
+        }
+        return ret;
+    }
+    /** 67. 二进制求和
+     * <a href="https://leetcode.cn/problems/add-binary/description/">...</a>
+     * 字符串模拟
+     * Description: addBinary
+     * Param: * @param a
+     * @param b
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 12:03 2024/6/3
+     */
+    public String addBinary(String a, String b) {
+        StringBuilder ret = new StringBuilder();
+        int n = Math.max(a.length(), b.length()), carry = 0;
+        for (int i = 0; i < n; ++i) {
+            carry += i < a.length() ? (a.charAt(a.length() - 1 - i) - '0') : 0;
+            carry += i < b.length() ? (b.charAt(b.length() - 1 - i) - '0') : 0;
+            ret.append((char) (carry % 2 + '0'));
+            carry /= 2;
+        }
+
+        if (carry > 0) {
+            ret.append('1');
+        }
+        return ret.reverse().toString();
+    }
+    /** 43. 字符串相乘
+     * <a href="https://leetcode.cn/problems/multiply-strings/description/">...</a>
+     * 解法一: 单纯的模拟.
+     * 时间复杂度: O(M * N + N^2)
+     * 空间复杂度: O(M + N)
+     * Description: multiply
+     * Param: * @param num1
+     * @param num2
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 21:41 2024/6/4
+     */
+
+    public String multiply1(String num1, String num2) {
+        if (num1.equals("0") || num2.equals("0"))
+            return "0";
+        int n = num1.length(), m = num2.length();
+        StringBuilder ret = new StringBuilder("0");
+        for (int j = m - 1; j >= 0; j--) {
+            char ch2 = num2.charAt(j);
+            StringBuilder tmp = new StringBuilder();
+            int carry = 0, sum = 0;
+            for (int i = n - 1; i >= 0; i--) {
+                char ch1 = num1.charAt(i);
+                sum = (ch1 - '0') * (ch2 - '0') + carry;
+                tmp.append(sum % 10);
+                carry = sum / 10;
+            }
+            if (carry != 0) tmp.append(carry);
+            int t = m - j - 1;
+            tmp.reverse();
+            while (t-- > 0) {
+                tmp.append("0");
+            }
+            ret = addString(ret, tmp);
+        }
+        return ret.toString();
+    }
+
+    public StringBuilder addString(StringBuilder ret, StringBuilder tmp) {
+        if (ret.equals("0"))
+            return tmp;
+        if (tmp.equals("0"))
+            return ret;
+        StringBuilder ans = new StringBuilder();
+        int carry = 0;
+        int i = ret.length() - 1;
+        int j = tmp.length() - 1;
+        while (i >= 0 || j >= 0) {
+            int n1 = i >= 0 ? ret.charAt(i) - '0' : 0;
+            int n2 = j >= 0 ? tmp.charAt(j) - '0' : 0;
+            int sum = n1 + n2 + carry;
+            carry = sum / 10;
+            ans.append(sum % 10);
+            i--;
+            j--;
+        }
+        if (carry != 0) ans.append(carry);
+        return ans.reverse();
+    }
+
+    /** 43. 字符串相乘
+     * <a href="https://leetcode.cn/problems/multiply-strings/description/">...</a>
+     * 解法二: 无进位相乘,相加,最后处理进位.
+     * 时间复杂度: O(M * N)
+     * 空间复杂度: O(M + N)
+     * Description: multiply
+     * Param: * @param num1
+     * @param num2
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 21:41 2024/6/4
+     */
+    public String multiply2(String num1, String num2) {
+        if(num1.equals("0") || num2.equals("0")) return "0";
+        int n = num1.length(),m = num2.length();
+        StringBuilder s1 = new StringBuilder(num1);
+        StringBuilder s2 = new StringBuilder(num2);
+        s1.reverse();
+        s2.reverse();
+        int[] tmp = new int[n+m-1];
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                tmp[i+j] += (s1.charAt(i)-'0') * (s2.charAt(j)-'0');
+            }
+        }
+        //进位相加的工作:
+        int carry = 0,sum = 0;
+        StringBuilder ret = new StringBuilder();
+        for(int num : tmp) {
+            sum = num + carry;
+            ret.append(sum % 10);
+            carry = sum / 10;
+        }
+        if(carry != 0) {
+            ret.append(carry);
+        }
+        return ret.reverse().toString();
+    }
+
 }
