@@ -1257,5 +1257,50 @@ public class Text {
         }
         return ret.reverse().toString();
     }
+    /** 1047. 删除字符串中的所有相邻重复项
+     * <a href="https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/description/">...</a>
+     * 是要栈来模拟这个过程
+     * Description: removeDuplicates
+     * Param: * @param s
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 16:49 2024/6/6
+     */
+    public String removeDuplicates(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (char ch : s.toCharArray()) {
+            if(!stack.isEmpty()&&stack.peek()== ch) {
+                stack.pop();
+            }else {
+                stack.push(ch);
+            }
+        }
+        StringBuilder ret = new StringBuilder();
+        while (!stack.isEmpty()) {
+            ret.insert(0,stack.pop());
+        }
+        return ret.toString();
+    }
+    /** 1047. 删除字符串中的所有相邻重复项
+     * <a href="https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/description/">...</a>
+     * 使用使用StringBuilder 来模拟栈,这种思想确实得掌握加油吧
+     * Description: removeDuplicates2
+     * Param: * @param s
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 16:55 2024/6/6
+    */
+    public String removeDuplicates2(String s) {
+        StringBuilder ret = new StringBuilder();//使用StringBuilder 来模拟栈
+        for(int i = 0;i < s.length();i++) {
+            char tmp = s.charAt(i);
+            if(ret.length() != 0 && ret.charAt(ret.length()-1) == tmp) {
+                ret.deleteCharAt(ret.length()-1);
+            }else {
+                ret.append(tmp);
+            }
+        }
+        return ret.toString();
+    }
 
 }
