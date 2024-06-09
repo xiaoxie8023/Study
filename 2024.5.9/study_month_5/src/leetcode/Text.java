@@ -1303,4 +1303,172 @@ public class Text {
         return ret.toString();
     }
 
+    /** 844. 比较含退格的字符串
+     * <a href="https://leetcode.cn/problems/backspace-string-compare/description/">...</a>
+     * 这一题还是很有意思的,使用栈很简单,但是关使用栈是不够的
+     * 要掌握双指针,把空间复杂度给降为O(1)
+     * 时间复杂度: O(N)
+     * 空间复杂度: O(1)
+     * Description: backspaceCompare
+     * Param: * @param s
+     * @param t
+     * return: boolean
+     * Author: xiaoxie
+     * Date: 21:55 2024/6/8
+     */
+    public boolean backspaceCompare(String s, String t) {
+        int i = s.length()-1,j = t.length()-1;
+        int sbf = 0,tbf = 0;
+        while(i >= 0 || j >= 0) {
+            //s开始退格
+            while(i >= 0) {
+                if(s.charAt(i) == '#') {
+                    sbf++;
+                    i--;
+                }else if(sbf > 0) {
+                    sbf--;
+                    i--;
+                }else {
+                    break;
+                }
+            }
+            //t开始退格
+            while(j >= 0) {
+                if(t.charAt(j) == '#') {
+                    tbf++;
+                    j--;
+                }else if(tbf > 0) {
+                    tbf--;
+                    j--;
+                }else {
+                    break;
+                }
+            }
+            if(i >= 0 && j >= 0) {
+                if(s.charAt(i) != t.charAt(j)) {
+                    return false;
+                }
+            }else {
+                if(i >= 0 || j >= 0) {
+                    return false;
+                }
+            }
+            i--;
+            j--;
+        }
+        return true;
+    }
+    /** 227. 基本计算器 II
+     * <a href="https://leetcode.cn/problems/basic-calculator-ii/description/">...</a>
+     *  这一题其实就是一个模拟的过程,需要考虑的主要是一个问题:
+     *  那就是优先级的问题.就是乘和除的优先级是比加和减大的,
+     *  这个是我们主要需要考虑的问题.
+     *  我的想法是这样的: 先遍历一遍字符串,把乘的或者除的,先计算,然后在加到栈中.在栈里再计算加减法这样不就可以解决
+     *  这题主要难的是代码编写.
+     *  时间复杂度 : O(N)
+     *  空间复杂度 : O(N)
+     * Description: calculate
+     * Param: * @param s
+     * return: int
+     * Author: xiaoxie
+     * Date: 22:35 2024/6/8
+     */
+    public int calculate(String s) {
+        Stack<Integer> stack = new Stack<>();
+
+        int i = 0;
+        char sign = '+';
+        int sum = 0;
+        while(i < s.length()){
+            while(i < s.length() && Character.isDigit(s.charAt(i))){
+                sum = sum * 10 + s.charAt(i)-'0';
+                if(i < s.length()-1){
+                    i++;
+                }else{
+                    break;
+                }
+            }
+            if(i < s.length() && !Character.isDigit(s.charAt(i)) && s.charAt(i) != ' ' || i == s.length()-1){
+                if(sign == '+'){
+                    stack.push(sum);
+                }
+                if(sign == '-'){
+                    stack.push(-sum);
+                }
+                if(sign == '*'){
+                    stack.push(stack.pop() * sum);
+                }
+                if(sign == '/'){
+                    stack.push(stack.pop() / sum);
+                }
+                sign = s.charAt(i);
+                sum = 0;
+                i++;
+            }else{
+                i++;
+            }
+        }
+        int res = 0;
+        for(int num : stack){
+            res += num;
+        }
+        return res;
+    }
+    /** 394. 字符串解码
+     * <a href="https://leetcode.cn/problems/decode-string/description/">...</a>
+     * 使用栈模拟这个过程,主要是编写代码的能力
+     * Description: decodeString
+     * Param: * @param s
+     * return: java.lang.String
+     * Author: xiaoxie
+     * Date: 17:04 2024/6/9
+     */
+    public String decodeString(String s) {
+        Deque<Integer> countStack = new ArrayDeque<>(); // 存储数字
+        Deque<String> stringStack = new ArrayDeque<>(); // 存储字符串
+        String string = "";
+        int count = 0;
+        for (char ch : s.toCharArray()) {
+            if (Character.isDigit(ch)) {
+                count = count * 10 + ch - '0';
+            } else if (ch == '[') {
+                countStack.push(count);// 数字进栈
+                stringStack.push(string);
+                string = "";
+                count = 0;
+            } else if (ch == ']') {
+                StringBuilder tmp = new StringBuilder(stringStack.pop());
+                int end = countStack.pop();
+                for (int i = 0; i < end; i++) {
+                    tmp.append(string);
+                }
+                string = tmp.toString();
+            } else {
+                string += ch;
+            }
+        }
+        return string;
+    }
+    /** 946. 验证栈序列
+     *  <a href="https://leetcode.cn/problems/validate-stack-sequences/description/">...</a>
+     *  使用栈模拟过程.
+     * Description: validateStackSequences
+     * Param: * @param pushed
+     * @param popped
+     * return: boolean
+     * Author: xiaoxie
+     * Date: 17:28 2024/6/9
+     */
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        Deque<Integer> stack = new  ArrayDeque<>();
+        int n = pushed.length;
+        for(int i = 0,j = 0;i < n;i++) {
+            stack.push(pushed[i]);
+            while(!stack.isEmpty() && stack.peek() == popped[j]) {
+                stack.pop();
+                j++;
+            }
+        }
+        return stack.isEmpty();
+    }
 }
