@@ -1471,4 +1471,89 @@ public class Text {
         }
         return stack.isEmpty();
     }
+    /** 295. 数据流的中位数
+     *  <a href="https://leetcode.cn/problems/find-median-from-data-stream/description/">...</a>
+     * 主要就是使用大小堆来维护数据流的中位数
+     * 规定: 大根堆的长度为m.小根堆为 n
+     * 可能会出现的情况就是 :
+     *     1.m == n
+     *     2.m == n+1
+     * 后续加的数字都要维护好这个规则.
+     * 时间复杂度为 O(logN)
+     * 空间复杂度为: O(n)
+     * Description:  
+     * Param: * @param null
+     * return: 
+     * Author: xiaoxie
+     * Date: 14:50 2024/6/10 
+     */
+    class MedianFinder {
+        public PriorityQueue<Integer>big,small;
+        public int n,m;
+        public MedianFinder() {
+            big = new PriorityQueue<>((a,b) -> b - a);
+            small = new PriorityQueue<>();
+        }
+
+        public void addNum(int num) {
+            m = big.size();
+            n = small.size();
+            if(m == n) {
+                if(m == 0) {
+                    big.add(num);
+                }else {
+                    if(num <= big.peek()) {
+                        big.add(num);
+                    }else {
+                        small.add(num);
+                        int tmp = small.poll();
+                        big.add(tmp);
+                    }
+                }
+            }else {
+                if(num <= big.peek()) {
+                    big.add(num);
+                    int tmp = big.poll();
+                    small.add(tmp);
+                }else {
+                    small.add(num);
+                }
+            }
+        }
+        public double findMedian() {
+            m = big.size();
+           n = small.size();
+            if(m == n) {
+                return (1.0 * big.peek() + small.peek()) / 2;
+            }else {
+                return 1.0 * big.peek();
+            }
+        }
+    }
+    /** 1005. K 次取反后最大化的数组和
+     * <a href="https://leetcode.cn/problems/maximize-sum-of-array-after-k-negations/description/">...</a>
+     * 首先先排序,把负数给变成正数.
+     * 第二再次排序,如果 k % 2 == 0 就不需要任何改变.
+     * 如果 k % 2 == 1 就 减去 2 * nums[0]即可.
+     * Description: largestSumAfterKNegations
+     * Param: * @param nums
+     * @param k
+     * return: int
+     * Author: xiaoxie
+     * Date: 16:57 2024/6/10
+     */
+    public int largestSumAfterKNegations(int[] nums, int k) {
+        Arrays.sort(nums);
+        int ret = 0;
+        for(int i = 0;i < nums.length;i++) {
+            if(nums[i] < 0 && k > 0) {
+                nums[i] = -nums[i];
+                k--;
+            }
+            ret += nums[i];
+        }
+        Arrays.sort(nums);
+        return ret - (k % 2 == 0 ? 0 : 2 * nums[0]);
+    }
+
 }
