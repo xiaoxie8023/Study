@@ -6,7 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
-
+/** 登录
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:22 2024/6/11
+*/
 public class Landing {
 
     public static Boolean test(String user, String password) {

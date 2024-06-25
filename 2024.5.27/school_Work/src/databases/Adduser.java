@@ -6,7 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
-
+/** 用户表的MySQL
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:25 2024/6/11
+*/
 public class Adduser {
 
     public static Boolean adduser(String user, String studentid, String name, String password) {

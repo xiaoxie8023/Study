@@ -3,7 +3,7 @@ package view;
 /**
  * program: school_Work
  * <p>
- * description:
+ * description:Java图书管理系统
  * <p>
  * author: xiaoxie
  * <p>

@@ -15,6 +15,13 @@ import javax.swing.JTextField;
 
 import databases.Category;
 
+/** 修改图书类比
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 14:58 2024/6/11
+*/
 public class ModifyCategory extends JFrame{
 
     // 面板

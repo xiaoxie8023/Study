@@ -1555,5 +1555,105 @@ public class Text {
         Arrays.sort(nums);
         return ret - (k % 2 == 0 ? 0 : 2 * nums[0]);
     }
+    /** 2418. 按身高排序
+     * <a href="https://leetcode.cn/problems/sort-the-people/description/">...</a>
+     * 使用排序.
+     * Description: sortPeople
+     * Param: * @param names
+     * @param heights
+     * return: java.lang.String[]
+     * Author: xiaoxie
+     * Date: 14:48 2024/6/13
+     */
+    public String[] sortPeople(String[] names, int[] heights) {
+        int n = heights.length;
+        Integer[] index = new Integer[n];
+        for(int i = 0;i < n;i++) {
+            index[i] = i;
+        }
+        Arrays.sort(index,(a,b) -> heights[b] - heights[a]);
+        String[] ret = new String[n];
+        for(int i = 0;i < n;i++) {
+            ret[i] = names[index[i]];
+        }
+        return ret;
+    }
+    /**  870. 优势洗牌
+     * <a href="https://leetcode.cn/problems/advantage-shuffle/description/">...</a>
+     * .对nums1进行排序,对nums2的索引进行排序.
+     * 田忌赛马
+     * 时间复杂度O(NlogN)
+     * 空间复杂度:O(N)
+     * Description: advantageCount
+     * Param: * @param nums1
+     * @param nums2
+     * return: int[]
+     * Author: xiaoxie
+     * Date: 15:03 2024/6/18
+     */
+    public int[] advantageCount(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        Integer[] index = new Integer[n];
+        for(int i = 0;i < n;i++) {
+            index[i] = i;
+        }
+        Arrays.sort(nums1);
+        Arrays.sort(index,(a,b) -> nums2[a]-nums2[b]);
+        int l = 0, r = n - 1; // nums2(索引)的左右指针
+        for(int num : nums1) {
+            if(num > nums2[index[l]]) nums2[index[l++]] = num;
+            else {
+                nums2[index[r--]] = num;
+            }
+        }
+        return nums2;
+    }
+    /** 409. 最长回文串
+     * <a href="https://leetcode.cn/problems/longest-palindrome/description/">...</a>
+     * 贪心法
+     * 「回文串」是指倒序后和自身完全相同的字符串，即具有关于中心轴对称的性质。观察发现，
+     * 当回文串长度为偶数时，则所有字符都出现了偶数次；
+     * 当回文串长度为奇数时，则位于中心的字符出现了奇数次，其余所有字符出现偶数次；
+     * 根据以上分析，字符串能被构造成回文串的充要条件为：除了一种字符出现奇数次外，其余所有字符出现偶数次
+     * 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+     * Description: longestPalindrome
+     * Param: * @param s
+     * return: int
+     * Author: xiaoxie
+     * Date: 15:01 2024/6/25
+     */
+    public int longestPalindrome(String s) {
+        int[] hash = new int[128];
+        for(char ch : s.toCharArray()) {
+            hash[ch-'A']++;
+        }
+        int ret = 0;
+        for(int num : hash) {
+            ret += num / 2 * 2;
+            if(ret % 2 == 0 && num % 2 == 1) {
+                ret++;
+            }
+        }
+        return ret;
+    }
+    /** 942. 增减字符串匹配
+     * <a href="https://leetcode.cn/problems/di-string-match/description/">...</a>
+     * 贪心法
+     * Description: diStringMatch
+     * Param: * @param s
+     * return: int[]
+     * Author: xiaoxie
+     * Date: 15:35 2024/6/25
+     */
+    public int[] diStringMatch(String s) {
+        int n = s.length();
+        int left = 0,right = n;//记录该排列最大值和最小值
+        int[] res = new int[n+1];
+        for(int i = 0;i < n;i++) {
+            res[i] = s.charAt(i) == 'I' ? left++ : right--;
+        }
+        res[n] = left;
+        return res;
+    }
 
 }

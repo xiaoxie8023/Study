@@ -28,15 +28,14 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import databases.FindBook;
-
+/** 图书查询界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:01 2024/6/11
+*/
 public class BookSearch {
-    /*
-     * 一个大标签
-     *
-     * 一个下拉框 一个文本框 一个按钮
-     *
-     * 一个表格
-     */
     // 分层窗格
     public JLayeredPane jLayeredPane = new JLayeredPane();
     // 标签

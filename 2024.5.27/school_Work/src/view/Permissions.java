@@ -22,7 +22,7 @@ import databases.UpdateAdmin;
 /**
  * 修改权限界面
  *
- * @author K.X
+ * @author xiaoixe
  */
 public class Permissions extends JFrame {
 

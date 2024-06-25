@@ -15,7 +15,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import databases.UpdateAdmin;
-
+/** 设置密码界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:02 2024/6/11
+*/
 public class AdminSetPass extends JFrame{
     // 面板
     private JPanel jPanel = new JPanel();

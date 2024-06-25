@@ -12,12 +12,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
-/**
- * 图书管理界面
- *
- * @author K.X
- *
- */
+/** 图书管理界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:01 2024/6/11
+*/
 public class BookAdmin {
     /*
      * 标签

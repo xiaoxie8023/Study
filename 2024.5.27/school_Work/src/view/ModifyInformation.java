@@ -22,15 +22,14 @@ import databases.ConnectDatabase;
 
 /**
  * 修改信息界面
- * @author K.X
+ * @author 小谢
+ * 两个标签     用户名
+ *  一标签    一文本框     学号
+ *  一标签    一文本框      姓名
  *
  * */
 public class ModifyInformation extends JFrame{
-    /*
-     * 两个标签     用户名
-     * 一标签    一文本框     学号
-     * 一标签    一文本框      姓名
-     * */
+
     //面板
     private JPanel jPanel = new JPanel();
     //标签

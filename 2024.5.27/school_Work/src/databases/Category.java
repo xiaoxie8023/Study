@@ -5,7 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
-
+/** 类比的MySql
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:24 2024/6/11
+*/
 public class Category {
     public Category() {
     }

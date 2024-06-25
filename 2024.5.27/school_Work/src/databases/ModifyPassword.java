@@ -4,7 +4,13 @@ package databases;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
+/** 修改密码
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:21 2024/6/11
+*/
 public class ModifyPassword {
     public ModifyPassword() {
     }

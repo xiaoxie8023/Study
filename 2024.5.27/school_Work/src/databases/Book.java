@@ -6,7 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JComboBox;
-
+/** 图书表的MySQL
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:25 2024/6/11
+*/
 public class Book {
     public Book() {
     }
@@ -31,9 +37,7 @@ public class Book {
     //添加图书
     public static void addbook(String category,String bookname,String author,String press) {
         Connection con = ConnectDatabase.connectDB();
-
         PreparedStatement preSql;
-
         String sqlStr = "insert into booktable(category,bookname,author,press,state) values (?,?,?,?,?)";
 
         try {
@@ -56,7 +60,6 @@ public class Book {
         PreparedStatement preSql;
 
         String sqlStr = "update booktable set category = ? ,bookname = ? ,author = ?,press = ? ,state = ? where bookid = ?";
-
         try {
             preSql = con.prepareStatement(sqlStr);
             preSql.setString(1, category);

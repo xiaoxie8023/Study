@@ -3,6 +3,20 @@ package databases;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+/**
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:23 2024/6/11
+*/
+/** 连接MySQL
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:24 2024/6/11
+*/
 public class ConnectDatabase {
     public static Connection connectDB() {
         String url = "jdbc:mysql://localhost:3306/mis?serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true";
@@ -14,7 +28,6 @@ public class ConnectDatabase {
         }
         Connection con = null;
         try {
-            // 如果您的MySQL 8服务器配置了不同的用户名或密码，请更改此处
             con = DriverManager.getConnection(url, "root", "010920");
         } catch (SQLException e) {
             e.printStackTrace();

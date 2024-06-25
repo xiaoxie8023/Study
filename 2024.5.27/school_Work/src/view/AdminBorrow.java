@@ -35,11 +35,13 @@ import databases.ConnectDatabase;
 import databases.FindBook;
 import databases.FindBorrow;
 
-/**
- * 管理员借书记录页面
- *
- * @author K.X
- */
+/** 管理员借书记录页面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:14 2024/6/11
+*/
 public class AdminBorrow extends JFrame {
     /*
      * 背景图片 表格

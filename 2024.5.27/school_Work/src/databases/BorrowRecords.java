@@ -10,7 +10,13 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-
+/** 借阅图书的MySQL
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:24 2024/6/11
+*/
 public class BorrowRecords {
     public BorrowRecords() {
     }

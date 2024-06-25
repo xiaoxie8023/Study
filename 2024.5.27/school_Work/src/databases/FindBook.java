@@ -9,7 +9,13 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-
+/** 查找书籍的MySQL
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:23 2024/6/11
+*/
 public class FindBook {
 
     FindBook() {

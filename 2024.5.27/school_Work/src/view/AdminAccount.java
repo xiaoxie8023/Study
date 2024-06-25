@@ -24,10 +24,13 @@ import javax.swing.table.JTableHeader;
 
 import databases.ConnectDatabase;
 
-/**
- * 账户信息界面
- *
- */
+/** 账户信息界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:14 2024/6/11
+*/
 public class AdminAccount extends JFrame {
     /*
      * 背景图片 表格

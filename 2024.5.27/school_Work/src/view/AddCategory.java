@@ -14,7 +14,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import databases.Category;
-
+/** 管理员添加图书类别界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:19 2024/6/11
+*/
 public class AddCategory extends JFrame{
     // 面板
     private JPanel jPanel = new JPanel();

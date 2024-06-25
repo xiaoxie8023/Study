@@ -26,12 +26,13 @@ import javax.swing.table.JTableHeader;
 
 import databases.ConnectDatabase;
 
-/**
- * 用户借书记录界面
- *
- * @author K.X
- *
- */
+/** 用户借书记录界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:00 2024/6/11
+*/
 public class BorrowRecords extends JFrame {
     /*
      * 背景图片 表格

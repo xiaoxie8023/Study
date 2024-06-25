@@ -22,7 +22,7 @@ import databases.ConnectDatabase;
 /**
  * 修改密码界面
  *
- * @author K.X
+ * @author xiaoixe
  *
  */
 public class ModifyPassword extends JFrame {

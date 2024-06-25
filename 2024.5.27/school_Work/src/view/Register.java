@@ -23,14 +23,12 @@ import databases.Adduser;
 /**
  * 注册界面
  *
- * @author K.X
- *
+ * @author xiaoxie
+ * 七个标签 五个个文本框 一个按钮 七个面板
  */
 public class Register {
 
-    /*
-     * 七个标签 五个个文本框 一个按钮 七个面板
-     */
+
     // 标签
     private JLabel jLabel = new JLabel("注 册");
     private JLabel jLabel2 = new JLabel("用 户 名：");
@@ -38,7 +36,7 @@ public class Register {
     private JLabel jLabel4 = new JLabel(" 姓  名：");
     private JLabel jLabel5 = new JLabel(" 密  码：");
     private JLabel jLabel6 = new JLabel("确认密码:");
-    private JLabel jLabel7 = new JLabel("                                       密码长度：6~16位，不能含有空格 ");
+    private JLabel jLabel7 = new JLabel("                                       密码长度：6~16位，不能为空 ");
 
     private String user;
     private String studentid;

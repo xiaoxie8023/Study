@@ -16,14 +16,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
+/** 账户管理界面
+ * 四个按钮 修改账号 修改密码 借书记录 退出程序
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:20 2024/6/11
+*/
 public class AccountManagement {
-    /*
-     * 标签
-     *
-     * 四个按钮 修改账号 修改密码 借书记录 退出程序
-     *
-     */
     // 面板
     public JPanel jPanel2 = new JPanel();
     // 标签

@@ -29,11 +29,13 @@ import databases.Book;
 import databases.FindBook;
 import databases.FindBorrow;
 
-/**
- * 添加图书界面
- *
- * @author K.X
- */
+/** 添加图书界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:20 2024/6/11
+*/
 public class AddBook extends JFrame{
 
     // 面板

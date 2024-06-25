@@ -12,12 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- * 管理员账户界面
- *
- * @author K.X
- *
- */
+/** 管理员账户界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:15 2024/6/11
+*/
 public class Admin {
     /*
      * 标签

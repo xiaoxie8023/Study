@@ -23,12 +23,13 @@ import databases.BorrowRecords;
 import databases.ConnectDatabase;
 import databases.FindBook;
 
-/**
- * 图书借还界面
- *
- * @author K.X
- *
- */
+/** 图书借还界面
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:00 2024/6/11
+*/
 
 public class BorrowingReturning {
     /*

@@ -7,7 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
-
+/** 修改管理员
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:21 2024/6/11
+*/
 public class UpdateAdmin {
     //判断用户是否存在
     public static boolean sureuser(String user) {

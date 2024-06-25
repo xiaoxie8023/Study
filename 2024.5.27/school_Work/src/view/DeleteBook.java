@@ -16,7 +16,13 @@ import javax.swing.table.DefaultTableModel;
 
 import databases.Book;
 import databases.FindBook;
-
+/** 删除图书
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:00 2024/6/11
+*/
 public class DeleteBook extends JFrame {
     // 面板
     private JPanel jPanel = new JPanel();

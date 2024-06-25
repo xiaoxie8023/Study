@@ -22,15 +22,13 @@ import databases.Landing;
 /**
  * 登陆界面
  *
- * @author K.X
- *
+ * @author xiaoxie
+ * 定义窗体 一个大标签 两个小标签 两个文本框 两个按钮 五个面板
  */
 
 public class Land {
 
-    /*
-     * 定义窗体 一个大标签 两个小标签 两个文本框 两个按钮 五个面板
-     */
+
     // 标签
     private JLabel jLabel = new JLabel("图书管理系统");
     private JLabel jLabel2 = new JLabel("用户名： ");
@@ -95,7 +93,7 @@ public class Land {
         frame.add(Label);
 
         // 不可以改变窗体的大小
-        frame.setResizable(false);
+        //frame.setResizable(false);
         // 窗口关闭
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // 窗口可见
@@ -115,9 +113,6 @@ public class Land {
         field2.setPreferredSize(dimension);
         button.setPreferredSize(dimension2);
         button2.setPreferredSize(dimension2);
-//		button.setBackground(Color.pink);
-//		button2.setBackground(Color.GRAY);
-
         jPanel.add(jLabel);
         jPanel2.add(jLabel2);
         jPanel2.add(field);
@@ -147,8 +142,6 @@ public class Land {
         jLabel3.setOpaque(false);
         field.setOpaque(false);
         field2.setOpaque(false);
-        // button.setOpaque(false);
-        // button2.setOpaque(false);
         jPanel.setOpaque(false);
         jPanel2.setOpaque(false);
         jPanel3.setOpaque(false);
@@ -158,7 +151,6 @@ public class Land {
     }
 
     private void addEvent() {
-
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

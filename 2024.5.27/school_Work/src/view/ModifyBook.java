@@ -21,7 +21,13 @@ import javax.swing.table.DefaultTableModel;
 
 import databases.Book;
 import databases.FindBook;
-
+/** 修改图书的类型
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 14:58 2024/6/11
+*/
 public class ModifyBook extends JFrame{
     // 面板
     private JPanel jPanel = new JPanel();

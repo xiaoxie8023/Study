@@ -9,7 +9,13 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
-
+/** 借书记录的MySQL
+ * Description:
+ * Param: * @param null
+ * return:
+ * Author: xiaoxie
+ * Date: 15:22 2024/6/11
+*/
 public class FindBorrow {
     public FindBorrow() {
     }

@@ -7,11 +7,7 @@ import java.awt.Toolkit;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-/**
- * 主界面
- * @author K.X
- *
- * */
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,12 +15,14 @@ import javax.swing.JTabbedPane;
 
 import databases.Landing;
 
-
+/** 管理员和普通用户界面
+ * Description:
+ * Param: * @param null
+ * return: 选项卡     主界面       图书查询          图书借还       账号管理
+ * Author: xiaoxie
+ * Date: 14:59 2024/6/11
+*/
 public class MainInterface extends JFrame{
-    /*
-     * 选项卡     主界面       图书查询          图书借还       账号管理
-     *
-     * */
     //选项卡
     public  JTabbedPane jTabbedPane = new JTabbedPane();
     //主界面面板
@@ -56,7 +54,7 @@ public class MainInterface extends JFrame{
         jPanel.add(Label);
 
 
-
+         //管理员和普通用户的通用界面
         jTabbedPane.setFont(font2);
         jTabbedPane.add("主 界 面", jPanel);
         BookSearch search = new BookSearch();
@@ -66,9 +64,9 @@ public class MainInterface extends JFrame{
         returning.setUser(user);
         returning.setModel(search.model);
         jTabbedPane.add("图书借还", returning.jLayeredPane);
-
-
+        //根据角色的不同展示不同的界面
         if(Landing.sureadmin(user)) {
+            //管理员
             Admin admin = new Admin();
             admin.setUser(user);
             admin.setFrame(this);
@@ -79,6 +77,7 @@ public class MainInterface extends JFrame{
             jTabbedPane.add("图书管理",bookAdmin.jPanel2);
 
         }else {
+            //普通用户
             AccountManagement management = new AccountManagement();
             management.setUser(user);
             management.setFrame(this);
