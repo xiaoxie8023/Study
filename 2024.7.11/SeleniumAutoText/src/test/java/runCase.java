@@ -7,9 +7,9 @@
  * <p>
  * create: 2024-07-11 21:33
  **/
-public class RunTest {
+public class runCase {
     public static void main(String[] args) throws InterruptedException {
-        FirstAutoTest firstAutoTest = new FirstAutoTest();
-        firstAutoTest.test01();
+        FirstTest test = new FirstTest();
+        test.test01();
     }
 }
